@@ -26,9 +26,9 @@ namespace MatBoxApi.Controllers
             return _context.Materials;
         }
 
-        public static int Calc(int a, int b)
+        public MaterialsContext GetDb()
         {
-            return a + b;
+            return _context;
         }
 
         // GET
@@ -125,7 +125,7 @@ namespace MatBoxApi.Controllers
                 metaDateTime = DateTime.Now, versionNumber = 1, 
                 metaFileSize = uploadedFile.Length, path = path }); 
             await _context.SaveChangesAsync();
-            return Ok("Material " + uploadedFile.FileName + "was created");
+            return Ok("Material " + uploadedFile.FileName + " was created");
         }
         
         // POST
