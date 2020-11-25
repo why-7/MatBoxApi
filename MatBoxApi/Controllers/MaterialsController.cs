@@ -47,9 +47,26 @@ namespace MatBoxApi.Controllers
         [HttpGet("get_info_with_filters")]
         public object GetInfoWithFilters([FromForm]string category, [FromForm]long minSize, [FromForm]long maxSize)
         {
+            switch (category)
+            {
+                case "Презентация":
+                    break;
+                case "Приложение":
+                    break;
+                case "Другое":
+                    break;
+                default:
+                    return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
+            }
+
+            if (minSize < 0 || maxSize < 0)
+            {
+                return BadRequest("Wrong material size. The minimum and maximum material size must be greater than -1.");
+            }
+
             return _context.Materials.Where(x => x.category == category)
-                .Where(x=>x.metaFileSize < maxSize)
-                .Where(x=> x.metaFileSize > minSize); 
+                .Where(x=> x.metaFileSize <= maxSize)
+                .Where(x=> x.metaFileSize >= minSize); 
         }
         
         // GET
@@ -69,24 +86,17 @@ namespace MatBoxApi.Controllers
         
         // GET
         [HttpGet("get_specific_material")]
-        public object GetSpecificMaterial([FromForm]string materialName, [FromForm]string versionOfMaterial)
+        public object GetSpecificMaterial([FromForm]string materialName, [FromForm]int versionOfMaterial)
         {
             if (_context.Materials.Count(x => x.materialName == materialName) == 0)
             {
                 return BadRequest("Material " + materialName + " is not in the database.");
             }
-
-            try
+            
+            if ((_context.Materials.Count(x => x.materialName == materialName) < versionOfMaterial) || 
+                (versionOfMaterial <= 0))
             {
-                if ((_context.Materials.Count(x => x.materialName == materialName) < int.Parse(versionOfMaterial)) || 
-                    (int.Parse(versionOfMaterial) <= 0))
-                {
-                    return BadRequest("Wrong material version");
-                }
-            }
-            catch (FormatException)
-            {
-                return BadRequest("Wrong material version string format");
+                return BadRequest("Wrong material version");
             }
 
             var path = "Files/" + materialName + "/" + versionOfMaterial + "/" + materialName;

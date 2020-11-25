@@ -27,6 +27,106 @@ namespace MatBoxApi.Tests
         }
         
         [Test]
+        public void GetInfo_Test()
+        {
+            var fileName = AddFileToDb(1).Result;
+
+            var materials = (IQueryable<Material>) _controller.GetInfo(fileName);
+            
+            Assert.AreEqual(materials.Count(), 1);
+        }
+        
+        [Test]
+        public void GetInfo_NotInDb_Test()
+        {
+            var ans = (BadRequestObjectResult) _controller.GetInfo("xyz");
+            
+            Assert.AreEqual(ans.StatusCode, 400);
+        }
+        
+        [Test]
+        public void GetInfoWithFilters_WrongCategory_Test()
+        {
+            var ans = (BadRequestObjectResult) _controller.GetInfoWithFilters("xyz", 0, 1);
+            
+            Assert.AreEqual(ans.StatusCode, 400);
+        }
+        
+        [Test]
+        public void GetInfoWithFilters_WrongMatSize_Test()
+        {
+            var ans = (BadRequestObjectResult) _controller.GetInfoWithFilters("Другое", -1, -1);
+            
+            Assert.AreEqual(ans.StatusCode, 400);
+        }
+        
+        [Test]
+        public void GetInfoWithFilters_Presentation_Test()
+        {
+            var fileName = AddFileToDb(5).Result;
+            var materials = (IQueryable<Material>) _controller
+                .GetInfoWithFilters("Презентация", 0, 1);
+            
+            Assert.AreEqual(materials.Count(x=> x.materialName == fileName), 1);
+        }
+        
+        [Test]
+        public void GetInfoWithFilters_App_Test()
+        {
+            var fileName = AddFileToDb(6).Result;
+            var materials = (IQueryable<Material>) _controller
+                .GetInfoWithFilters("Приложение", 0, 1);
+            
+            Assert.AreEqual(materials.Count(x=> x.materialName == fileName), 1);
+        }
+        
+        [Test]
+        public void GetActualMaterial_NotInDb_Test()
+        {
+            var ans = (BadRequestObjectResult) _controller.GetActualMaterial("xyz");
+            
+            Assert.AreEqual(ans.StatusCode, 400);
+        }
+        
+        [Test]
+        public void GetActualMaterial_Test()
+        {
+            var fileName = AddFileToDb(1).Result;
+
+            var ans = (FileStreamResult) _controller.GetActualMaterial(fileName);
+
+            Assert.AreEqual(ans.FileDownloadName, fileName);
+        }
+        
+        [Test]
+        public void GetSpecificMaterial_Test()
+        {
+            var fileName = AddFileToDb(1).Result;
+
+            var ans = (FileStreamResult) _controller.GetSpecificMaterial(fileName, 1);
+
+            Assert.AreEqual(ans.FileDownloadName, fileName);
+        }
+        
+        [Test]
+        public void GetSpecificMaterial_NotInDb_Test()
+        {
+            var ans = (BadRequestObjectResult) _controller.GetSpecificMaterial("xyz", 1);
+
+            Assert.AreEqual(ans.StatusCode, 400);
+        }
+        
+        [Test]
+        public void GetSpecificMaterial_WrongMatVersion_Test()
+        {
+            var fileName = AddFileToDb(1).Result;
+
+            var ans = (BadRequestObjectResult) _controller.GetSpecificMaterial(fileName, 2);
+
+            Assert.AreEqual(ans.StatusCode, 400);
+        }
+        
+        [Test]
         public void AddNewMaterial_Test()
         {
             var fileName = AddFileToDb(1).Result;
