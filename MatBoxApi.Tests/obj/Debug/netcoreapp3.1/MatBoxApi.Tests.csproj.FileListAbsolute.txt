@@ -118,3 +118,9 @@ C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Sys
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\System.Diagnostics.DiagnosticSource.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\MatBoxApi.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\MatBoxApi.pdb
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Owin.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll

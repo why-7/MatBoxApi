@@ -8,17 +8,17 @@ using MatBoxApi.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace MatBoxApi.Tests
 {
     public class MaterialsControllerTests
     {
-        private readonly MaterialsController _controller = new MaterialsController(new MaterialsContext
-        (new DbContextOptionsBuilder<MaterialsContext>()
+        private readonly MaterialsController _controller = new MaterialsController(new AppDbContext
+        (new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql("Host=localhost;Port=5432;Username=postgres;Database=postgres;")
-            .Options));
+            .Options), new Logger<MaterialsController>(new LoggerFactory()));
 
         [SetUp]
         public void Setup()
