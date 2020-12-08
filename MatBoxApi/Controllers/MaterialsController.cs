@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MatBoxApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +29,7 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
+        [Authorize]
         [HttpGet]
         public IQueryable<Material> GetAllMaterials()
         {
@@ -37,6 +39,7 @@ namespace MatBoxApi.Controllers
         }
 
         // GET
+        [Authorize]
         [HttpGet("get_info_about_material")]
         public object GetInfo([FromForm]string materialName)
         { 
@@ -56,6 +59,7 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
+        [Authorize]
         [HttpGet("get_info_with_filters")]
         public object GetInfoWithFilters([FromForm]string category, [FromForm]long minSize, [FromForm]long maxSize)
         {
@@ -91,6 +95,7 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
+        [Authorize]
         [HttpGet("get_actual_material")]
         public object GetActualMaterial([FromForm]string materialName)
         {
@@ -113,6 +118,7 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
+        [Authorize]
         [HttpGet("get_specific_material")]
         public object GetSpecificMaterial([FromForm]string materialName, [FromForm]int versionOfMaterial)
         {
@@ -141,6 +147,7 @@ namespace MatBoxApi.Controllers
         }
         
         // POST
+        [Authorize]
         [HttpPost("add_new_material")]
         public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
@@ -185,6 +192,7 @@ namespace MatBoxApi.Controllers
         }
         
         // POST
+        [Authorize]
         [HttpPost("add_new_version_of_material")]
         public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
@@ -221,6 +229,7 @@ namespace MatBoxApi.Controllers
         }
 
         // PATCH
+        [Authorize]
         [HttpPatch("change_category_of_material")]
         public ObjectResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
         {

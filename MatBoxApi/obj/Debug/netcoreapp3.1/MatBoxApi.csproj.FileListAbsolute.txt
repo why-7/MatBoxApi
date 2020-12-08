@@ -46,3 +46,15 @@ C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\bin\Debug\netcoreapp3.1\Microsoft
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\bin\Debug\netcoreapp3.1\MatBoxApi.Views.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\bin\Debug\netcoreapp3.1\MatBoxApi.Views.pdb
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.RazorAssemblyInfo.cache
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.RazorAssemblyInfo.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.TagHelpers.input.cache
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.TagHelpers.output.cache
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.RazorCoreGenerate.cache
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.RazorTargetAssemblyInfo.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.Views.pdb
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
