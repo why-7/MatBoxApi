@@ -31,7 +31,7 @@ namespace MatBoxApi.Tests
         {
             var fileName = AddFileToDb(1).Result;
 
-            var materials = (IQueryable<Material>) _controller.GetInfo(fileName);
+            var materials = (IQueryable<Material>) _controller.GetInfoAboutMaterial(fileName);
             
             Assert.AreEqual(materials.Count(), 1);
         }
@@ -39,7 +39,7 @@ namespace MatBoxApi.Tests
         [Test]
         public void GetInfo_NotInDb_Test()
         {
-            var ans = (BadRequestObjectResult) _controller.GetInfo("xyz");
+            var ans = (BadRequestObjectResult) _controller.GetInfoAboutMaterial("xyz");
             
             Assert.AreEqual(ans.StatusCode, 400);
         }

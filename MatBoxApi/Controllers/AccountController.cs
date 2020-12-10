@@ -95,6 +95,14 @@ namespace MatBoxApi.Controllers
             }
             return View(model);
         }
+        
+        [HttpGet("LoginApi")]
+        public async Task<IActionResult> LoginApi([FromHeader]string userName, [FromHeader]string password)
+        {
+            var result = await _signInManager.PasswordSignInAsync(userName, password, 
+                true, false);
+            return StatusCode(result.Succeeded ? 200 : 400);
+        }
  
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -125,7 +133,6 @@ namespace MatBoxApi.Controllers
                 return NotFound();
             }
             
-
             // получаем пользователя
             var  user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound();

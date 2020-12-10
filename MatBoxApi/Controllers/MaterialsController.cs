@@ -45,7 +45,7 @@ namespace MatBoxApi.Controllers
             }
         }
         
-        // GET
+        // will return all materials that are stored in the application
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("")]
         public IQueryable<Material> GetAllMaterials()
@@ -55,10 +55,11 @@ namespace MatBoxApi.Controllers
             return _context.Materials;
         }
 
-        // GET
+        // will return information about all versions of the material (you must pass materialName
+        // in the request body)
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("GetInfoAboutMaterial")]
-        public object GetInfo([FromForm]string materialName)
+        public object GetInfoAboutMaterial([FromForm]string materialName)
         { 
             _logger.LogInformation("Information about the " + materialName + " material " +
                                     "is requested");
@@ -75,7 +76,8 @@ namespace MatBoxApi.Controllers
             return _context.Materials.Where(x => x.materialName == materialName);
         }
         
-        // GET
+        // will return information about all versions of materials of a certain category and size (you must
+        // pass them in the request body)
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("GetInfoWithFilters")]
         public object GetInfoWithFilters([FromForm]string category, [FromForm]long minSize, [FromForm]long maxSize)
@@ -103,7 +105,8 @@ namespace MatBoxApi.Controllers
                 .Where(x=> x.metaFileSize >= minSize); 
         }
         
-        // GET
+        // will return the latest version of the material for download (you must pass the materialName
+        // in the request body)
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("GetActualMaterial")]
         public object GetActualMaterial([FromForm]string materialName)
@@ -126,7 +129,8 @@ namespace MatBoxApi.Controllers
             return File(fs, "text/plain", materialName);
         }
         
-        // GET
+        // will return a specific version of the material for download (you must pass the name and version
+        // in the request body)
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("GetSpecificMaterial")]
         public object GetSpecificMaterial([FromForm]string materialName, [FromForm]int versionOfMaterial)
@@ -155,7 +159,8 @@ namespace MatBoxApi.Controllers
             return File(fs, "text/plain", materialName);
         }
         
-        // POST
+        // adds new material to the app (in the request body, you must pass the file and it's category.
+        // Possible categories of material: Презентация, Приложение, Другое)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost("AddNewMaterial")]
         public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
@@ -191,7 +196,7 @@ namespace MatBoxApi.Controllers
             return Ok("Material " + uploadedFile.FileName + " was created");
         }
         
-        // POST
+        // adds new version of material to the app (in the request body, you must pass the file)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost("AddNewVersionOfMaterial")]
         public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
@@ -228,7 +233,8 @@ namespace MatBoxApi.Controllers
             return Ok("New version of material" + uploadedFile.FileName+ " was upload");
         }
 
-        // PATCH
+        // changes the category of the material in all versions
+        // (in the request body, you must pass the materialName and newCategory)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPatch("ChangeCategoryOfMaterial")]
         public ObjectResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
