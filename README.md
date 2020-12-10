@@ -4,7 +4,7 @@ All business logic of the app is contained in three controllers:
 2. AccountController - various actions for users of simple categories (reader, writer, no role).
 3. MaterialsController - methods for working with WebAPI
 
-#How to run
+# How to run
 1. Create database:
 docker run -it --rm -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres
 2. Run IIS Express (in the next version this element will be moved to the Docker container)
