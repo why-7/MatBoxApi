@@ -27,6 +27,23 @@ namespace MatBoxApi.Controllers
         {
             return _context;
         }
+
+        public int CheckCategory(string category)
+        {
+            switch (category)
+            {
+                case "Презентация":
+                    return 1;
+                case "Приложение":
+                    return 1;
+                case "Другое":
+                    return 1;
+                default:
+                    _logger.LogError(category + " is wrong category. Use: Презентация, " +
+                                     "Приложение, Другое");
+                    return 0;
+            }
+        }
         
         // GET
         [Authorize(Roles = "Admin, Reader")]
@@ -65,18 +82,10 @@ namespace MatBoxApi.Controllers
         {
             _logger.LogInformation( "Information on category " + category + 
                                     " is requested, minimum size " + minSize + ", maximum size " + maxSize);
-            switch (category)
+            
+            if (CheckCategory(category) == 0)
             {
-                case "Презентация":
-                    break;
-                case "Приложение":
-                    break;
-                case "Другое":
-                    break;
-                default:
-                    _logger.LogError(category + " is wrong category. Use: Презентация, " +
-                                     "Приложение, Другое");
-                    return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
+                return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
             }
 
             if (minSize < 0 || maxSize < 0)
@@ -161,18 +170,9 @@ namespace MatBoxApi.Controllers
                 return BadRequest("Material " + uploadedFile.FileName + " is already in the database.");
             }
 
-            switch (category)
+            if (CheckCategory(category) == 0)
             {
-                case "Презентация":
-                    break;
-                case "Приложение":
-                    break;
-                case "Другое":
-                    break;
-                default:
-                    _logger.LogError(category + " is wrong category. Use: Презентация, " +
-                                      "Приложение, Другое");                    
-                    return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
+                return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
             }
             
             Directory.CreateDirectory("Files/" + uploadedFile.FileName + "/1");
@@ -242,18 +242,9 @@ namespace MatBoxApi.Controllers
                 return BadRequest("Material " + materialName + " is not in the database.");
             }
             
-            switch (newCategory)
+            if (CheckCategory(newCategory) == 0)
             {
-                case "Презентация":
-                    break;
-                case "Приложение":
-                    break;
-                case "Другое":
-                    break;
-                default:
-                    _logger.LogError(newCategory + " is wrong new category. Use: " +
-                                                "Презентация, Приложение, Другое");                    
-                    return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
+                return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
             }
             
             var materials = _context.Materials.Where(x => x.materialName == materialName);
