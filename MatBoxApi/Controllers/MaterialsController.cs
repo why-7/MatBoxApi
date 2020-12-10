@@ -29,8 +29,8 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
-        [Authorize]
-        [HttpGet]
+        [Authorize(Roles = "Admin, Reader")]
+        [HttpGet("")]
         public IQueryable<Material> GetAllMaterials()
         {
             _logger.LogInformation("All materials are requested");
@@ -39,8 +39,8 @@ namespace MatBoxApi.Controllers
         }
 
         // GET
-        [Authorize]
-        [HttpGet("get_info_about_material")]
+        [Authorize(Roles = "Admin, Reader")]
+        [HttpGet("GetInfoAboutMaterial")]
         public object GetInfo([FromForm]string materialName)
         { 
             _logger.LogInformation("Information about the " + materialName + " material " +
@@ -59,8 +59,8 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
-        [Authorize]
-        [HttpGet("get_info_with_filters")]
+        [Authorize(Roles = "Admin, Reader")]
+        [HttpGet("GetInfoWithFilters")]
         public object GetInfoWithFilters([FromForm]string category, [FromForm]long minSize, [FromForm]long maxSize)
         {
             _logger.LogInformation( "Information on category " + category + 
@@ -95,8 +95,8 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
-        [Authorize]
-        [HttpGet("get_actual_material")]
+        [Authorize(Roles = "Admin, Reader")]
+        [HttpGet("GetActualMaterial")]
         public object GetActualMaterial([FromForm]string materialName)
         {
             _logger.LogInformation("Download of the actual version of the " + materialName + 
@@ -118,8 +118,8 @@ namespace MatBoxApi.Controllers
         }
         
         // GET
-        [Authorize]
-        [HttpGet("get_specific_material")]
+        [Authorize(Roles = "Admin, Reader")]
+        [HttpGet("GetSpecificMaterial")]
         public object GetSpecificMaterial([FromForm]string materialName, [FromForm]int versionOfMaterial)
         {
             _logger.LogInformation("Download of the specific version (v." + versionOfMaterial + 
@@ -147,8 +147,8 @@ namespace MatBoxApi.Controllers
         }
         
         // POST
-        [Authorize]
-        [HttpPost("add_new_material")]
+        [Authorize(Roles = "Admin, Writer")]
+        [HttpPost("AddNewMaterial")]
         public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
             _logger.LogInformation("Request to add new material, name is " + 
@@ -192,8 +192,8 @@ namespace MatBoxApi.Controllers
         }
         
         // POST
-        [Authorize]
-        [HttpPost("add_new_version_of_material")]
+        [Authorize(Roles = "Admin, Writer")]
+        [HttpPost("AddNewVersionOfMaterial")]
         public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
             _logger.LogInformation("Request to add new version of material, name is " + 
@@ -229,8 +229,8 @@ namespace MatBoxApi.Controllers
         }
 
         // PATCH
-        [Authorize]
-        [HttpPatch("change_category_of_material")]
+        [Authorize(Roles = "Admin, Writer")]
+        [HttpPatch("ChangeCategoryOfMaterial")]
         public ObjectResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
         {
             _logger.LogInformation("Request to change the category of the " + materialName + 

@@ -1,0 +1,29 @@
+﻿@model MatBoxApi.Models.User
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if(User.Identity.IsAuthenticated)
+{
+    <h1>Matbox</h1>
+    <p>Hello, @User.Identity.Name!</p>
+                                  
+    @if (User.IsInRole("Admin"))
+    {
+        <a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="Index">Войти в админку</a>
+    }
+    
+    <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Edit" 
+       asp-route-name="@User.Identity.Name">Изменить свои роли</a>
+
+    <form method="post" asp-controller="Account" asp-action="Logout">
+        <input type="submit" value="Выход" />
+    </form>
+}
+else
+{
+    <h1>Matbox</h1>
+    <a asp-controller="Account" asp-action="Login">Вход</a>
+    <a asp-controller="Account" asp-action="Register">Регистрация</a>
+}

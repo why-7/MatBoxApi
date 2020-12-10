@@ -57,4 +57,10 @@ C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\MatBoxApi.Views.pdb
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
-C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Admin\Index.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Admin\UserList.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Admin\CreateUser.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Account\Edit.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Admin\CreateRole.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Admin\EditUserRoles.cshtml.g.cs
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi\obj\Debug\netcoreapp3.1\Razor\Views\Account\Index.cshtml.g.cs

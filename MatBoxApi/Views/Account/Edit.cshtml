@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model MatBoxApi.ViewModels.ChangeRoleViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@if (User.Identity.Name == Model.UserEmail)
+{
+    <h2>Мои роли (@Model.UserEmail)</h2>
+
+    <h3>Чтобы изменения вступили в силу - вам необходимо сделать logout</h3>
+
+    <form method="post" asp-controller="Account" asp-action="Edit">
+        <input type="hidden" name="userId" value="@Model.UserId"/>
+        <div class="form-group">
+            @foreach (IdentityRole role in Model.AllRoles)
+            {
+                <input type="checkbox" name="roles" value="@role.Name"
+                       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "")/>
+                @role.Name
+                <br/>
+            }
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+}
+else
+{
+    <h3>@User.Identity.Name, вы хотите получить доступ не к своим ролям ай-яй-яй</h3>
+}
