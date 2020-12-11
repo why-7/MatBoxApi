@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ars\\RiderProjects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj": {}
+    "C:\\Users\\ars\\Desktop\\_projects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ars\\RiderProjects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj": {
+    "C:\\Users\\ars\\Desktop\\_projects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ars\\RiderProjects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj",
+        "projectUniqueName": "C:\\Users\\ars\\Desktop\\_projects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj",
         "projectName": "MatBoxApi",
-        "projectPath": "C:\\Users\\ars\\RiderProjects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj",
+        "projectPath": "C:\\Users\\ars\\Desktop\\_projects\\MatBoxApi\\MatBoxApi\\MatBoxApi.csproj",
         "packagesPath": "C:\\Users\\ars\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ars\\RiderProjects\\MatBoxApi\\MatBoxApi\\obj\\",
+        "outputPath": "C:\\Users\\ars\\Desktop\\_projects\\MatBoxApi\\MatBoxApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ars\\AppData\\Roaming\\NuGet\\NuGet.Config"
