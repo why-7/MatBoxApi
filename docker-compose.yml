@@ -1,0 +1,30 @@
+version: "3.8"
+
+networks:
+ matboxdev:
+  driver: bridge
+
+services:
+ matbox:
+  image: matbox:latest
+  depends_on: 
+     - "postgres_image"
+  build: 
+    context: .
+    dockerfile: Dockerfile
+  environment: 
+     DB_CONNECTION_STRING: "Host=postgres_image;Port=5432;Username=postgres;Database=postgres"
+  ports: 
+    - "8000:80"
+  networks:
+    - matboxdev
+
+ postgres_image:
+  image: postgres:latest
+  ports:
+     - "5432"
+  restart: always
+  environment: 
+     POSTGRES_HOST_AUTH_METHOD: trust
+  networks:
+    - matboxdev

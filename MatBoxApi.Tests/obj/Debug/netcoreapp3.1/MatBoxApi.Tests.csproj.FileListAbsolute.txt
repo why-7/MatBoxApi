@@ -94,7 +94,6 @@ C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\obj\Debug\netcoreapp3.1\Mat
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\obj\Debug\netcoreapp3.1\MatBoxApi.Tests.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\obj\Debug\netcoreapp3.1\MatBoxApi.Tests.pdb
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\obj\Debug\netcoreapp3.1\MatBoxApi.Tests.genruntimeconfig.cache
-C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Web.config
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\appsettings.json
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
@@ -124,3 +123,5 @@ C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Mic
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Owin.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
 C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\MatBoxApi.Views.dll
+C:\Users\ars\RiderProjects\MatBoxApi\MatBoxApi.Tests\bin\Debug\netcoreapp3.1\MatBoxApi.Views.pdb

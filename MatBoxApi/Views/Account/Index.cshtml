@@ -22,7 +22,7 @@
     </form>
     
     <h3>Доступные WebAPI methods:</h3>
-    @if (User.IsInRole("Admin") || User.IsInRole("Reader"))
+    @if (User.IsInRole("Admin") || User.IsInRole("Writer"))
     {
         <p>getAllMaterials - will return all materials that are stored in the application.</p>
         <p>getInfoAboutMaterial - will return information about all versions of the material (you must pass materialName
@@ -34,7 +34,7 @@
         <p>getSpecificMaterial - will return a specific version of the material for download (you must pass the name 
             and version in the request body)</p>
     }
-    if (User.IsInRole("Admin") || User.IsInRole("Writer"))
+    if (User.IsInRole("Admin") || User.IsInRole("Reader"))
     {
         <p>addNewMaterial - adds new material to the app (in the request body, you must pass the file and it's category.
             Possible categories of material: Презентация, Приложение, Другое)</p>

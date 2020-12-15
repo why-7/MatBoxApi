@@ -5,9 +5,8 @@ All business logic of the app is contained in three controllers:
 3. MaterialsController - methods for working with WebAPI
 
 # How to run
-1. Create database:
-docker run -it --rm -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 postgres
-2. Run IIS Express (in the next version this element will be moved to the Docker container)
+1. Create MatBox image: "docker image build -t matbox ."
+2. Run server with database: "docker-compose up"
 3. Create user in /Account/Register
 4. Get rights for your user here /Account/Edit?name=userName (for the changes to take effect, you need to log out and log in again)
 5. Enjoy!
