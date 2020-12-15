@@ -5,11 +5,10 @@ All business logic of the app is contained in three controllers:
 3. MaterialsController - methods for working with WebAPI
 
 # How to run
-1. Create MatBox image: "docker image build -t matbox ."
-2. Run server with database: "docker-compose up"
-3. Create user in /Account/Register
-4. Get rights for your user here /Account/Edit?name=userName (for the changes to take effect, you need to log out and log in again)
-5. Enjoy!
+1. Run app: "docker-compose build ; docker-compose up"
+2. Create user in localhost:8000/Account/Register
+3. Get rights for your user here localhost:8000/Account/Edit?name=userName (for the changes to take effect, you need to log out and log in again)
+4. Enjoy!
 
 # WebAPI methods
 Available on /api/materials/[methodName]
