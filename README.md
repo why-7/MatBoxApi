@@ -1,4 +1,4 @@
-# MatBox
+# Matbox
 All business logic of the app is contained in three controllers:
 1. AdminController - different actions on users and their roles (only admins have access).
 2. AccountController - various actions for users of simple categories (reader, writer, no role).
