@@ -5,17 +5,17 @@ WORKDIR /source
 EXPOSE 80
 
 # copy csproj and restore as distinct layers
-COPY MatBoxApi.sln .
-COPY MatBoxApi/MatBoxApi.csproj ./MatBoxApi/
-RUN dotnet restore MatBoxApi/MatBoxApi.csproj 
+COPY Matbox.sln .
+COPY Matbox/Matbox.csproj ./Matbox/
+RUN dotnet restore Matbox/Matbox.csproj 
 
 # copy everything else and build app
-COPY MatBoxApi/. ./MatBoxApi/
-WORKDIR /source/MatBoxApi
+COPY Matbox/. ./Matbox/
+WORKDIR /source/Matbox
 RUN dotnet publish -c release -o /app --no-restore
 
 # final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:3.1
 WORKDIR /app
 COPY --from=build /app ./
-ENTRYPOINT ["dotnet", "MatBoxApi.dll"]
+ENTRYPOINT ["dotnet", "Matbox.dll"]
