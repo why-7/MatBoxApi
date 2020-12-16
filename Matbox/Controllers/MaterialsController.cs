@@ -14,16 +14,16 @@ namespace Matbox.Controllers
     [Route("api/[controller]")]
     public class MaterialsController : ControllerBase
     {
-        private readonly MaterialsDbContext _context;
+        private readonly AppDbContext _context;
         private readonly ILogger<MaterialsController> _logger;
         
-        public MaterialsController(MaterialsDbContext context, ILogger<MaterialsController> logger)
+        public MaterialsController(AppDbContext context, ILogger<MaterialsController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        public MaterialsDbContext GetDb()
+        public AppDbContext GetDb()
         {
             return _context;
         }

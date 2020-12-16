@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Matbox.Models
 {
-    public class UsersDbContext : IdentityDbContext<User>
+    public sealed class AppDbContext : IdentityDbContext<User>
     {
-        public UsersDbContext(DbContextOptions<UsersDbContext> options)
+        public DbSet<Material> Materials { get; set; }
+        
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         { 
             Database.EnsureCreated();
