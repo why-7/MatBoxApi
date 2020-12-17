@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Matbox.Models;
-using Matbox.ViewModels;
+using Matbox.DAL.Models;
+using Matbox.WEB.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Matbox.Controllers
+namespace Matbox.WEB.Controllers
 {
     [Route("[controller]")]
     public class AdminController : Controller

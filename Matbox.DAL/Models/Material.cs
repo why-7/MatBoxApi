@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Matbox.Models
+namespace Matbox.DAL.Models
 {
     public class Material
     {

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Matbox.Models;
-using Matbox.ViewModels;
+using Matbox.DAL.Models;
+using Matbox.WEB.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Matbox.Controllers
+namespace Matbox.WEB.Controllers
 {
     [Route("[controller]")]
     public class AccountController : Controller

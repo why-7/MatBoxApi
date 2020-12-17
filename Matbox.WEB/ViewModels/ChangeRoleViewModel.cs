@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace Matbox.ViewModels
+namespace Matbox.WEB.ViewModels
 {
     public class ChangeRoleViewModel
     {

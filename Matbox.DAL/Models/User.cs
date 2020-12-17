@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Matbox.Models
+namespace Matbox.DAL.Models
 {
     public class User : IdentityUser
     {

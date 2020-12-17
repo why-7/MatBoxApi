@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Matbox.Models
+namespace Matbox.DAL.Models
 {
     public sealed class AppDbContext : IdentityDbContext<User>
     {

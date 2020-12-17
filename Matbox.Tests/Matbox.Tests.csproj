@@ -13,7 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Matbox\Matbox.csproj" />
+      <ProjectReference Include="..\Matbox.BLL\Matbox.BLL.csproj" />
+      <ProjectReference Include="..\Matbox.WEB\Matbox.WEB.csproj" />
     </ItemGroup>
 
 </Project>

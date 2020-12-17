@@ -3,12 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Matbox.Models;
+using Matbox.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Matbox.Controllers
+namespace Matbox.WEB.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Matbox.ViewModels
+namespace Matbox.WEB.ViewModels
 {
     public class LoginViewModel
     {
