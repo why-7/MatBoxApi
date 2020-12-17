@@ -6,7 +6,7 @@
 
 @if(User.Identity.IsAuthenticated)
 {
-    <h1>Matbox.WEB</h1>
+    <h1>Matbox</h1>
     <p>Hello, @User.Identity.Name!</p>
                                   
     @if (User.IsInRole("Admin"))
@@ -50,7 +50,7 @@
 }
 else
 {
-    <h1>Matbox.WEB</h1>
+    <h1>Matbox</h1>
     <a asp-controller="Account" asp-action="Login">Вход</a>
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
