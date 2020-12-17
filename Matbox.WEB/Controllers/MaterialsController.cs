@@ -23,23 +23,6 @@ namespace Matbox.WEB.Controllers
             _logger = logger;
         }
 
-        public int CheckCategory(string category)
-        {
-            switch (category)
-            {
-                case "Презентация":
-                    return 1;
-                case "Приложение":
-                    return 1;
-                case "Другое":
-                    return 1;
-                default:
-                    _logger.LogError(category + " is wrong category. Use: Презентация, " +
-                                     "Приложение, Другое");
-                    return 0;
-            }
-        }
-        
         // will return all materials that are stored in the application
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("")]
@@ -116,7 +99,7 @@ namespace Matbox.WEB.Controllers
             }
 
             var actualVersion = _context.Materials.Count(x => x.materialName == materialName);
-            var path = "Files/" + materialName + "/" + actualVersion + "/" + materialName;
+            var path = "../Matbox.DAL/Files/" + materialName + "/" + actualVersion + "/" + materialName;
             var fs = new FileStream(path, FileMode.Open);
             
             _logger.LogInformation("Actual version of the " + materialName + 
@@ -146,7 +129,7 @@ namespace Matbox.WEB.Controllers
                 return BadRequest("Wrong material version");
             }
 
-            var path = "Files/" + materialName + "/" + versionOfMaterial + "/" + materialName;
+            var path = "../Matbox.DAL/Files/" + materialName + "/" + versionOfMaterial + "/" + materialName;
             var fs = new FileStream(path, FileMode.Open);
             
             _logger.LogInformation("Specific version (v." + versionOfMaterial + 
@@ -175,8 +158,8 @@ namespace Matbox.WEB.Controllers
                 return BadRequest("Wrong category. Use: Презентация, Приложение, Другое");
             }
             
-            Directory.CreateDirectory("Files/" + uploadedFile.FileName + "/1");
-            var path = "Files/" + uploadedFile.FileName + "/1/" + uploadedFile.FileName;
+            Directory.CreateDirectory("../Matbox.DAL/Files/" + uploadedFile.FileName + "/1");
+            var path = "../Matbox.DAL/Files/" + uploadedFile.FileName + "/1/" + uploadedFile.FileName;
             await using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await uploadedFile.CopyToAsync(fileStream);
@@ -210,8 +193,8 @@ namespace Matbox.WEB.Controllers
             var category = _context.Materials.Where(x => x.materialName == uploadedFile.FileName).
                 First(x => x.category != null).category;
             
-            Directory.CreateDirectory("Files/" + uploadedFile.FileName + "/" + newNumber);
-            var path = "Files/" + uploadedFile.FileName+ "/" + newNumber + "/" + uploadedFile.FileName;
+            Directory.CreateDirectory("../Matbox.DAL/Files/" + uploadedFile.FileName + "/" + newNumber);
+            var path = "../Matbox.DAL/Files/" + uploadedFile.FileName+ "/" + newNumber + "/" + uploadedFile.FileName;
             await using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await uploadedFile.CopyToAsync(fileStream);
@@ -258,6 +241,23 @@ namespace Matbox.WEB.Controllers
             _logger.LogInformation(materialName + " category has been changed to " + 
                                     newCategory);
             return Ok(materialName + " category has been changed to " + newCategory);
+        }
+        
+        public int CheckCategory(string category)
+        {
+            switch (category)
+            {
+                case "Презентация":
+                    return 1;
+                case "Приложение":
+                    return 1;
+                case "Другое":
+                    return 1;
+                default:
+                    _logger.LogError(category + " is wrong category. Use: Презентация, " +
+                                     "Приложение, Другое");
+                    return 0;
+            }
         }
     }
 }
