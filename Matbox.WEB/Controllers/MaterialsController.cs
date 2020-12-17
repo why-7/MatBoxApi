@@ -23,11 +23,6 @@ namespace Matbox.WEB.Controllers
             _logger = logger;
         }
 
-        public AppDbContext GetDb()
-        {
-            return _context;
-        }
-
         public int CheckCategory(string category)
         {
             switch (category)
