@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Matbox.BLL.Services;
 using Matbox.DAL.Models;
 using Matbox.WEB.Controllers;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +16,10 @@ namespace Matbox.Tests
 {
     public class MaterialsControllerTests
     {
-        private readonly MaterialsController _controller = new MaterialsController(new AppDbContext
-        (new DbContextOptionsBuilder<AppDbContext>()
+        private readonly MaterialsController _controller = new MaterialsController(new MaterialsDbContext
+        (new DbContextOptionsBuilder<MaterialsDbContext>()
             .UseNpgsql("Host=localhost;Port=5432;Username=postgres;Database=postgres;")
-            .Options), new Logger<MaterialsController>(new LoggerFactory()));
+            .Options), new Logger<MaterialsService>(new LoggerFactory()));
 
         [SetUp]
         public void Setup()

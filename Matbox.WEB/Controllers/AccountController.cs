@@ -23,7 +23,6 @@ namespace Matbox.WEB.Controllers
             _roleManager = roleManager;
         }
         
-        // GET
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {

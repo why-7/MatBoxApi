@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Matbox.BLL\Matbox.BLL.csproj" />
       <ProjectReference Include="..\Matbox.DAL\Matbox.DAL.csproj" />
     </ItemGroup>
 
