@@ -16,7 +16,7 @@ namespace Matbox.WEB.Controllers
     {
         private readonly MaterialsService _materialsManager;
 
-        public MaterialsController(MaterialsDbContext context, ILogger<MaterialsService> logger)
+        public MaterialsController(AppDbContext context, ILogger<MaterialsService> logger)
         {
             _materialsManager = new MaterialsService(context, logger);
         }

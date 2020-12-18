@@ -13,9 +13,9 @@ namespace Matbox.BLL.Services
     public class MaterialsService : ControllerBase
     {
         private readonly ILogger<MaterialsService> _logger;
-        private readonly MaterialsDbContext _context;
+        private readonly AppDbContext _context;
         
-        public MaterialsService(MaterialsDbContext context, ILogger<MaterialsService> logger)
+        public MaterialsService(AppDbContext context, ILogger<MaterialsService> logger)
         {
             _logger = logger;
             _context = context;
