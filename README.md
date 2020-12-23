@@ -1,11 +1,11 @@
 # How to run
 1. Run app: "docker-compose build ; docker-compose up"
-2. Create user in localhost:8000/Account/Register
-3. Get rights for your user here localhost:8000/Account/Edit?name=userName (for the changes to take effect, you need to log out and log in again)
+2. Create user in /Account/Register
+3. Get rights for your user /Account/Edit?name=userName (for the changes to take effect, you need to log out and log in again)
 4. Enjoy!
 
 # WebAPI methods
-Available on /api/materials/[methodName]
+Swagger available on localhost:[port]/
 1. getAllMaterials - will return all materials that are stored in the application.
 2. getInfoAboutMaterial - will return information about all versions of the material (you must pass materialName in the request body)
 3. getInfoWithFilters - will return information about all versions of materials of a certain category and size (you must pass them in the request body)

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.DTO;
 using Matbox.DAL.Models;
@@ -19,22 +18,7 @@ namespace Matbox.BLL.Services
             _logger = logger;
             _dbService = new DbService(context);
         }
-        
-        public int CheckCategory(string category)
-        {
-            switch (category)
-            {
-                case "Презентация":
-                    return 1;
-                case "Приложение":
-                    return 1;
-                case "Другое":
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
-        
+
         public AnsDTO GetAllMaterials()
         {
             _logger.LogInformation("All materials are requested");
@@ -284,7 +268,22 @@ namespace Matbox.BLL.Services
             };
         }
 
-        public IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
+        private int CheckCategory(string category)
+        {
+            switch (category)
+            {
+                case "Презентация":
+                    return 1;
+                case "Приложение":
+                    return 1;
+                case "Другое":
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+        
+        private IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
         {
             var materialDtos = new List<MaterialDto>();
             
