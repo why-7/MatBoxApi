@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.DTO;
 using Matbox.DAL.Models;
@@ -41,7 +43,7 @@ namespace Matbox.BLL.Services
             {
                 StatusCode = 200, 
                 Comment = "Ok",
-                Materials = _dbService.GetAllMaterials()
+                MaterialsDtos = CastToMaterialDtos(_dbService.GetAllMaterials())
             };
         }
         
@@ -67,7 +69,7 @@ namespace Matbox.BLL.Services
             {
                 StatusCode = 200, 
                 Comment = "Ok",
-                Materials = _dbService.GetMaterialsByName(dto.materialName)
+                MaterialsDtos = CastToMaterialDtos(_dbService.GetMaterialsByName(dto.materialName))
             };
         }
         
@@ -106,7 +108,8 @@ namespace Matbox.BLL.Services
             {
                 StatusCode = 200, 
                 Comment = "Ok",
-                Materials = _dbService.GetMaterialsByNameAndSizes(dto.category, dto.minSize, dto.maxSize)
+                MaterialsDtos = CastToMaterialDtos(_dbService.GetMaterialsByNameAndSizes(dto.category, 
+                    dto.minSize, dto.maxSize))
             };
         }
         
@@ -179,12 +182,12 @@ namespace Matbox.BLL.Services
             };
         }
         
-        public async Task<AnsDTO> AddNewMaterial(MaterialDto dto)
+        public async Task<AnsDTO> AddNewMaterial(FilesDTO dto)
         {
             _logger.LogInformation("Request to add new material, name is " + 
                                    dto.uploadedFile.FileName + " category is " + dto.category);
             
-            if (_dbService.GetCountOfMaterials(dto.uploadedFile.FileName) == 0) 
+            if (_dbService.GetCountOfMaterials(dto.uploadedFile.FileName) > 0) 
             {
                 _logger.LogError("Material " + dto.uploadedFile.FileName + 
                                   " is already in the database.");
@@ -217,7 +220,7 @@ namespace Matbox.BLL.Services
             };
         }
         
-        public async Task<AnsDTO> AddNewVersionOfMaterial(MaterialDto dto)
+        public async Task<AnsDTO> AddNewVersionOfMaterial(FilesDTO dto)
         {
             _logger.LogInformation("Request to add new version of material, name is " + 
                                    dto.uploadedFile.FileName);
@@ -279,6 +282,26 @@ namespace Matbox.BLL.Services
                 StatusCode = 200, 
                 Comment = dto.materialName + " category has been changed to " + dto.category
             };
+        }
+
+        public IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
+        {
+            var materialDtos = new List<MaterialDto>();
+            
+            foreach (var material in materials)
+            {
+                materialDtos.Add(new MaterialDto
+                {
+                    materialName = material.materialName,
+                    category = material.category,
+                    versionNumber = material.versionNumber,
+                    path = material.path,
+                    metaDateTime = material.metaDateTime,
+                    metaFileSize = material.metaFileSize
+                });
+            }
+
+            return materialDtos;
         }
     }
 }

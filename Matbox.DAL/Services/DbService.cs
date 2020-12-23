@@ -17,7 +17,7 @@ namespace Matbox.DAL.Services
                 _context = context;
         }
 
-        public IQueryable<Material> GetAllMaterials()
+        public IEnumerable<Material> GetAllMaterials()
         {
             return _context.Materials;
         }
@@ -56,7 +56,7 @@ namespace Matbox.DAL.Services
                 .First(x => x.category != null).category;
         }
 
-        public async Task AddNewMaterialToDb(MaterialDto dto)
+        public async Task AddNewMaterialToDb(FilesDTO dto)
         {
             Directory.CreateDirectory("../Matbox.DAL/Files/" + dto.uploadedFile.FileName + "/1");
             var path = "../Matbox.DAL/Files/" + dto.uploadedFile.FileName + "/1/" + dto.uploadedFile.FileName;
@@ -71,7 +71,7 @@ namespace Matbox.DAL.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddNewVersionOfMaterialToDb(MaterialDto dto)
+        public async Task AddNewVersionOfMaterialToDb(FilesDTO dto)
         {
             var newNumber = GetCountOfMaterials(dto.uploadedFile.FileName) + 1;
             var category = GetCategoryOfMaterial(dto.uploadedFile.FileName);

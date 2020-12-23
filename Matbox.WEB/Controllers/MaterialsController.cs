@@ -24,9 +24,9 @@ namespace Matbox.WEB.Controllers
         // will return all materials that are stored in the application
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet("")]
-        public IEnumerable<Material> GetAllMaterials()
+        public IEnumerable<MaterialDto> GetAllMaterials()
         {
-            return _materialsService.GetAllMaterials().Materials;
+            return _materialsService.GetAllMaterials().MaterialsDtos;
         }
 
         // will return information about all versions of the material (you must pass materialName
@@ -38,7 +38,7 @@ namespace Matbox.WEB.Controllers
             var ans = _materialsService.GetInfoAboutMaterial( new MaterialDto { materialName = materialName} );
             if (ans.StatusCode == 200)
             {
-                return ans.Materials;
+                return ans.MaterialsDtos;
             }
             return BadRequest(ans.Comment);
         }
@@ -53,7 +53,7 @@ namespace Matbox.WEB.Controllers
                 maxSize = maxSize });
             if (ans.StatusCode == 200)
             {
-                return ans.Materials;
+                return ans.MaterialsDtos;
             }
 
             return BadRequest(ans.Comment);
@@ -97,7 +97,7 @@ namespace Matbox.WEB.Controllers
         [HttpPost("AddNewMaterial")]
         public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
-            var ans = await _materialsService.AddNewMaterial(new MaterialDto { uploadedFile = uploadedFile, 
+            var ans = await _materialsService.AddNewMaterial(new FilesDTO { uploadedFile = uploadedFile, 
                 category = category });
             if (ans.StatusCode == 200)
             {
@@ -112,7 +112,7 @@ namespace Matbox.WEB.Controllers
         [HttpPost("AddNewVersionOfMaterial")]
         public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
-            var ans = await _materialsService.AddNewVersionOfMaterial(new MaterialDto { uploadedFile = uploadedFile });
+            var ans = await _materialsService.AddNewVersionOfMaterial(new FilesDTO { uploadedFile = uploadedFile });
             if (ans.StatusCode == 200)
             {
                 return Ok(ans.Comment);
