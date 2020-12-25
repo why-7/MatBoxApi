@@ -4,6 +4,13 @@
 3. Get rights for your user /Account/Edit?name=userName (for the changes to take effect, you need to log out and log in again)
 4. Enjoy!
 
+# How to make migrations
+1. Go to \Matbox.DAL\Models
+2 dotnet ef --startup-project ..\Matbox.WEB\ migrations add InitialUsers --context UsersDbContext
+3. dotnet ef --startup-project ..\Matbox.WEB\ migrations add InitialMaterials --context MaterialsDbContext
+4. dotnet ef --startup-project ..\Matbox.WEB\ database update --context UsersDbContext
+5. dotnet ef --startup-project ..\Matbox.WEB\ database update --context MaterialsDbContext
+
 # WebAPI methods
 Swagger available on localhost:[port]/
 1. getAllMaterials - will return all materials that are stored in the application.

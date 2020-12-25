@@ -774,7 +774,8 @@
       "Matbox.DAL/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Http.Features": "5.0.0",
-          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "5.0.0"
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "5.0.0",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "5.0.0"
         },
         "runtime": {
           "Matbox.DAL.dll": {}

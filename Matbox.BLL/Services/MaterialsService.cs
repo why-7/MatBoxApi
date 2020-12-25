@@ -12,7 +12,7 @@ namespace Matbox.BLL.Services
     {
         private readonly DbService _dbService;
         
-        public MaterialsService(AppDbContext context)
+        public MaterialsService(MaterialsDbContext context)
         {
             _dbService = new DbService(context);
         }

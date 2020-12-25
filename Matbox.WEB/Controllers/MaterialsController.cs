@@ -17,7 +17,7 @@ namespace Matbox.WEB.Controllers
     {
         private readonly MaterialsService _materialsService;
 
-        public MaterialsController(AppDbContext context)
+        public MaterialsController(MaterialsDbContext context)
         {
             _materialsService = new MaterialsService(context);
         }

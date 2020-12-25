@@ -22,21 +22,16 @@ namespace Matbox.WEB
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*
             services.AddDbContext<MaterialsDbContext>(options => 
                 options.UseNpgsql(Configuration.GetConnectionString("Database")));
             
             services.AddDbContext<UsersDbContext>(options => 
                 options.UseNpgsql(Configuration.GetConnectionString("Database")));
-            */
-            
-            services.AddDbContext<AppDbContext>(options => 
-                options.UseNpgsql(Configuration.GetConnectionString("Database")));
             
             services.AddSwaggerGen();
             
             services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<UsersDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Matbox.DAL.Models
 {
@@ -10,7 +9,12 @@ namespace Matbox.DAL.Models
         public MaterialsDbContext(DbContextOptions<MaterialsDbContext> options)
             : base(options)
         { 
-            Database.EnsureCreated();
+            
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Material>();
         }
     }
 }

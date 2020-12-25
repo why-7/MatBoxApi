@@ -10,9 +10,9 @@ namespace Matbox.DAL.Services
 {
     public class DbService
     {
-        private readonly AppDbContext _context;
+        private readonly MaterialsDbContext _context;
 
-        public DbService(AppDbContext context)
+        public DbService(MaterialsDbContext context)
             {
                 _context = context;
         }
