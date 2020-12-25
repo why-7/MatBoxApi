@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Matbox.DAL.Models.User>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h2>Список пользователей</h2>
+<table class="table">
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>
+                <a class="btn btn-sm btn-primary" asp-action="EditUserRoles" asp-route-userid="@user.Id">Права доступа</a>
+            </td>
+        </tr>
+    }
+</table>
+
+<a asp-controller="Admin" asp-action="CreateUser">Создать пользователя</a>
