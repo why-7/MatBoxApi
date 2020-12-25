@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
 using Matbox.DAL.DTO;
@@ -16,9 +17,9 @@ namespace Matbox.WEB.Controllers
     {
         private readonly MaterialsService _materialsService;
 
-        public MaterialsController(AppDbContext context, ILogger<MaterialsService> logger)
+        public MaterialsController(AppDbContext context)
         {
-            _materialsService = new MaterialsService(context, logger);
+            _materialsService = new MaterialsService(context);
         }
 
         // will return all materials that are stored in the application
@@ -27,6 +28,7 @@ namespace Matbox.WEB.Controllers
         public IEnumerable<MaterialDto> GetAllMaterials()
         {
             return _materialsService.GetAllMaterials().MaterialsDtos;
+            // return Ok(_materialsService.GetAllMaterials().MaterialsDtos.ToList().ToString());
         }
 
         // will return information about all versions of the material (you must pass materialName
@@ -36,9 +38,10 @@ namespace Matbox.WEB.Controllers
         public object GetInfoAboutMaterial([FromForm]string materialName)
         {
             var ans = _materialsService.GetInfoAboutMaterial( new MaterialDto { materialName = materialName} );
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return ans.MaterialsDtos;
+                // return Ok(ans.MaterialsDtos.ToList().ToString());
             }
             return BadRequest(ans.Comment);
         }
@@ -51,9 +54,10 @@ namespace Matbox.WEB.Controllers
         {
             var ans = _materialsService.GetInfoWithFilters( new FiltersDTO { category = category, minSize = minSize, 
                 maxSize = maxSize });
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return ans.MaterialsDtos;
+               // return Ok(ans.MaterialsDtos.ToList().ToString());
             }
 
             return BadRequest(ans.Comment);
@@ -66,7 +70,7 @@ namespace Matbox.WEB.Controllers
         public IActionResult GetActualMaterial([FromForm]string materialName)
         {
             var ans = _materialsService.GetActualMaterial(new MaterialDto { materialName = materialName });
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return File(ans.Fs, "text/plain", materialName);
             }
@@ -83,7 +87,7 @@ namespace Matbox.WEB.Controllers
             var ans = _materialsService.GetSpecificMaterial(new MaterialDto { materialName = materialName, 
                 versionNumber = versionOfMaterial });
             
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return File(ans.Fs, "text/plain", materialName);
             }
@@ -99,7 +103,7 @@ namespace Matbox.WEB.Controllers
         {
             var ans = await _materialsService.AddNewMaterial(new FilesDTO { uploadedFile = uploadedFile, 
                 category = category });
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return Ok(ans.Comment);
             }
@@ -113,7 +117,7 @@ namespace Matbox.WEB.Controllers
         public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
             var ans = await _materialsService.AddNewVersionOfMaterial(new FilesDTO { uploadedFile = uploadedFile });
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return Ok(ans.Comment);
             }
@@ -130,7 +134,7 @@ namespace Matbox.WEB.Controllers
             var ans = _materialsService.ChangeCategory(new MaterialDto { materialName = materialName, 
                 category = newCategory });
             
-            if (ans.StatusCode == 200)
+            if (ans.IsValidBl)
             {
                 return Ok(ans.Comment);
             }

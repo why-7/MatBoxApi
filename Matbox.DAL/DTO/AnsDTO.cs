@@ -4,7 +4,7 @@ namespace Matbox.DAL.DTO
 {
     public class AnsDTO
     {
-        public int StatusCode { get; set; }
+        public bool IsValidBl { get; set; }
         public string Comment { get; set; }
         public IEnumerable<MaterialDto> MaterialsDtos { get; set; }
     }

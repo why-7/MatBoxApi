@@ -19,7 +19,7 @@ namespace Matbox.Tests
         private readonly MaterialsController _controller = new MaterialsController(new AppDbContext
         (new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql("Host=postgres_image;Port=5432;Username=postgres;Database=postgres;")
-            .Options), new Logger<MaterialsService>(new LoggerFactory()));
+            .Options));
 
         [SetUp]
         public void Setup()

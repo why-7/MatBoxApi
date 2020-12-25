@@ -1,4 +1,5 @@
 using Matbox.DAL.Models;
+using Matbox.WEB.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -66,6 +67,8 @@ namespace Matbox.WEB
             app.UseAuthentication();
             app.UseAuthorization();
             
+            app.UseMiddleware<LoggingMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

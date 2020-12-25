@@ -4,7 +4,7 @@ namespace Matbox.DAL.DTO
 {
     public class FsAnsDTO
     {
-        public int StatusCode { get; set; }
+        public bool IsValidBl { get; set; }
         public string Comment { get; set; }
         public FileStream Fs { get; set; }
     }
