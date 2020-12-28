@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
 using Matbox.DAL.DTO;
@@ -25,7 +26,7 @@ namespace Matbox.WEB.Controllers
         [HttpGet("")]
         public IEnumerable<MaterialDto> GetAllMaterials()
         {
-            return _materialsService.GetAllMaterials().MaterialsDtos;
+            return _materialsService.GetAllMaterials();
         }
 
         // will return information about all versions of the material (you must pass materialName
@@ -34,12 +35,14 @@ namespace Matbox.WEB.Controllers
         [HttpGet("GetInfoAboutMaterial")]
         public object GetInfoAboutMaterial([FromForm]string materialName)
         {
-            var ans = _materialsService.GetInfoAboutMaterial( new MaterialDto { materialName = materialName} );
-            if (ans.IsValidBl)
+            try
             {
-                return ans.MaterialsDtos;
+                return _materialsService.GetInfoAboutMaterial( new MaterialDto { materialName = materialName} );
             }
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         // will return information about all versions of materials of a certain category and size (you must
@@ -48,14 +51,15 @@ namespace Matbox.WEB.Controllers
         [HttpGet("GetInfoWithFilters")]
         public object GetInfoWithFilters([FromForm] string category, [FromForm] long minSize, [FromForm] long maxSize)
         {
-            var ans = _materialsService.GetInfoWithFilters( new FiltersDTO { category = category, minSize = minSize, 
-                maxSize = maxSize });
-            if (ans.IsValidBl)
+            try
             {
-                return ans.MaterialsDtos;
+                return _materialsService.GetInfoWithFilters( new FiltersDto { category = category, minSize = minSize, 
+                    maxSize = maxSize });
             }
-
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // will return the latest version of the material for download (you must pass the materialName
@@ -64,13 +68,15 @@ namespace Matbox.WEB.Controllers
         [HttpGet("GetActualMaterial")]
         public IActionResult GetActualMaterial([FromForm]string materialName)
         {
-            var ans = _materialsService.GetActualMaterial(new MaterialDto { materialName = materialName });
-            if (ans.IsValidBl)
+            try
             {
-                return File(ans.Fs, "text/plain", materialName);
+                var fs = _materialsService.GetActualMaterial(new MaterialDto { materialName = materialName });
+                return File(fs, "text/plain", materialName);
             }
-
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         // will return a specific version of the material for download (you must pass the name and version
@@ -79,15 +85,16 @@ namespace Matbox.WEB.Controllers
         [HttpGet("GetSpecificMaterial")]
         public object GetSpecificMaterial([FromForm]string materialName, [FromForm]int versionOfMaterial)
         {
-            var ans = _materialsService.GetSpecificMaterial(new MaterialDto { materialName = materialName, 
-                versionNumber = versionOfMaterial });
-            
-            if (ans.IsValidBl)
+            try
             {
-                return File(ans.Fs, "text/plain", materialName);
+                var fs = _materialsService.GetSpecificMaterial(new MaterialDto { materialName = materialName, 
+                    versionNumber = versionOfMaterial });
+                return File(fs, "text/plain", materialName);
             }
-
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         // adds new material to the app (in the request body, you must pass the file and it's category.
@@ -96,14 +103,16 @@ namespace Matbox.WEB.Controllers
         [HttpPost("AddNewMaterial")]
         public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
-            var ans = await _materialsService.AddNewMaterial(new FilesDTO { uploadedFile = uploadedFile, 
-                category = category });
-            if (ans.IsValidBl)
+            try
             {
-                return Ok(ans.Comment);
+                var ans =  await _materialsService.AddNewMaterial(new FilesDto { uploadedFile = uploadedFile, 
+                    category = category });
+                return Ok(ans);
             }
-
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         // adds new version of material to the app (in the request body, you must pass the file)
@@ -111,13 +120,16 @@ namespace Matbox.WEB.Controllers
         [HttpPost("AddNewVersionOfMaterial")]
         public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
-            var ans = await _materialsService.AddNewVersionOfMaterial(new FilesDTO { uploadedFile = uploadedFile });
-            if (ans.IsValidBl)
+            try
             {
-                return Ok(ans.Comment);
+                var ans =  await _materialsService.AddNewVersionOfMaterial(new FilesDto 
+                    { uploadedFile = uploadedFile });
+                return Ok(ans);
             }
-
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // changes the category of the material in all versions
@@ -126,15 +138,16 @@ namespace Matbox.WEB.Controllers
         [HttpPatch("ChangeCategoryOfMaterial")]
         public ObjectResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
         {
-            var ans = _materialsService.ChangeCategory(new MaterialDto { materialName = materialName, 
-                category = newCategory });
-            
-            if (ans.IsValidBl)
+            try
             {
-                return Ok(ans.Comment);
+                var ans =  _materialsService.ChangeCategory(new MaterialDto { materialName = materialName, 
+                    category = newCategory });
+                return Ok(ans);
             }
-
-            return BadRequest(ans.Comment);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

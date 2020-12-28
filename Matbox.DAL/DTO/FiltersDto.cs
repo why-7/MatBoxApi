@@ -1,6 +1,6 @@
 ﻿namespace Matbox.DAL.DTO
 {
-    public class FiltersDTO
+    public class FiltersDto
     {
         public string category { get; set; }
         public long minSize { get; set; }
