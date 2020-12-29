@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Matbox.BLL.Exceptions;
 using Matbox.DAL.DTO;
@@ -58,10 +60,11 @@ namespace Matbox.BLL.Services
             }
 
             var actualVersion = _dbService.GetCountOfMaterials(dto.materialName);
-            var path = "../Matbox.DAL/Files/" + dto.materialName + "/" + actualVersion + "/" + dto.materialName;
-            var fs = new FileStream(path, FileMode.Open);
-            
-            return fs;
+
+            var path = _dbService.GetAllMaterials().Where(x => x.materialName == dto.materialName)
+                .First(x => x.versionNumber == actualVersion).path;
+
+            return new FileStream(path, FileMode.Open);
         }
         
         public FileStream GetSpecificMaterial(MaterialDto dto)
@@ -77,10 +80,10 @@ namespace Matbox.BLL.Services
                 throw new WrongMaterialVersionException("Wrong material version");
             }
 
-            var path = "../Matbox.DAL/Files/" + dto.materialName + "/" + dto.versionNumber + "/" + dto.materialName;
-            var fs = new FileStream(path, FileMode.Open);
+            var path = _dbService.GetAllMaterials().Where(x => x.materialName == dto.materialName)
+                .First(x => x.versionNumber == dto.versionNumber).path;
             
-            return fs;
+            return new FileStream(path, FileMode.Open);
         }
         
         public async Task<string> AddNewMaterial(FilesDto dto)
@@ -96,7 +99,7 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            await _dbService.AddNewMaterialToDb(dto);
+            await _dbService.AddNewMaterialToDb(dto, GenRandomNameInLocalStorage());
             
             return "Material " + dto.uploadedFile.FileName + " was created";
         }
@@ -109,7 +112,7 @@ namespace Matbox.BLL.Services
                                                    " is not in the database.");
             }
 
-            await _dbService.AddNewVersionOfMaterialToDb(dto);
+            await _dbService.AddNewVersionOfMaterialToDb(dto, GenRandomNameInLocalStorage());
             
             return "New version of material" + dto.uploadedFile.FileName+ " was upload";
         }
@@ -150,8 +153,22 @@ namespace Matbox.BLL.Services
 
             return materialDtos;
         }
+        
+        public static string GenRandomNameInLocalStorage()
+        {
+            const string alphabet = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789";
+            var rnd = new Random();            
+            var sb = new StringBuilder(15);
+                        
+            for (var i = 0; i < 15; i++)
+            {
+                var position = rnd.Next(0, alphabet.Length-1);
+                sb.Append(alphabet[position]);
+            }
+            return sb.ToString();
+        }
     }
-    
+
     enum Categories
     {
         App,

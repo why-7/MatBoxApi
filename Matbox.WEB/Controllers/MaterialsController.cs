@@ -71,7 +71,7 @@ namespace Matbox.WEB.Controllers
             try
             {
                 var fs = _materialsService.GetActualMaterial(new MaterialDto { materialName = materialName });
-                return File(fs, "text/plain", materialName);
+                return File(fs, "application/octet-stream", materialName);
             }
             catch (Exception e)
             {
@@ -89,7 +89,7 @@ namespace Matbox.WEB.Controllers
             {
                 var fs = _materialsService.GetSpecificMaterial(new MaterialDto { materialName = materialName, 
                     versionNumber = versionOfMaterial });
-                return File(fs, "text/plain", materialName);
+                return File(fs, "application/octet-stream", materialName);
             }
             catch (Exception e)
             {

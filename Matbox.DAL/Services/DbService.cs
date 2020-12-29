@@ -56,10 +56,9 @@ namespace Matbox.DAL.Services
                 .First(x => x.category != null).category;
         }
 
-        public async Task AddNewMaterialToDb(FilesDto dto)
+        public async Task AddNewMaterialToDb(FilesDto dto, string nameInLocalStorage)
         {
-            Directory.CreateDirectory("../Matbox.DAL/Files/" + dto.uploadedFile.FileName + "/1");
-            var path = "../Matbox.DAL/Files/" + dto.uploadedFile.FileName + "/1/" + dto.uploadedFile.FileName;
+            var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
             await using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await dto.uploadedFile.CopyToAsync(fileStream);
@@ -71,14 +70,12 @@ namespace Matbox.DAL.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddNewVersionOfMaterialToDb(FilesDto dto)
+        public async Task AddNewVersionOfMaterialToDb(FilesDto dto, string nameInLocalStorage)
         {
             var newNumber = GetCountOfMaterials(dto.uploadedFile.FileName) + 1;
             var category = GetCategoryOfMaterial(dto.uploadedFile.FileName);
 
-            Directory.CreateDirectory("../Matbox.DAL/Files/" + dto.uploadedFile.FileName + "/" + newNumber);
-            var path = "../Matbox.DAL/Files/" + dto.uploadedFile.FileName + "/" + newNumber + "/"
-                       + dto.uploadedFile.FileName;
+            var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
             await using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await dto.uploadedFile.CopyToAsync(fileStream);
