@@ -61,8 +61,7 @@ namespace Matbox.BLL.Services
 
             var actualVersion = _dbService.GetCountOfMaterials(dto.materialName);
 
-            var path = _dbService.GetAllMaterials().Where(x => x.materialName == dto.materialName)
-                .First(x => x.versionNumber == actualVersion).path;
+            var path = _dbService.GetPathToFileByNameAndVersion(dto.materialName, actualVersion);
 
             return new FileStream(path, FileMode.Open);
         }
@@ -80,9 +79,8 @@ namespace Matbox.BLL.Services
                 throw new WrongMaterialVersionException("Wrong material version");
             }
 
-            var path = _dbService.GetAllMaterials().Where(x => x.materialName == dto.materialName)
-                .First(x => x.versionNumber == dto.versionNumber).path;
-            
+            var path = _dbService.GetPathToFileByNameAndVersion(dto.materialName, dto.versionNumber);
+
             return new FileStream(path, FileMode.Open);
         }
         

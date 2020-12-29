@@ -92,5 +92,11 @@ namespace Matbox.DAL.Services
             });
             await _context.SaveChangesAsync();
         }
+
+        public string GetPathToFileByNameAndVersion(string materialName, int version)
+        {
+            return GetAllMaterials().Where(x => x.materialName == materialName)
+                .First(x => x.versionNumber == version).path;
+        }
     }
 }
