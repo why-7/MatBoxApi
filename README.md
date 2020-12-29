@@ -6,10 +6,10 @@
 
 # How to make migrations
 1. Go to \Matbox.DAL\Models
-2 dotnet ef --startup-project ..\Matbox.WEB\ migrations add InitialUsers --context UsersDbContext
-3. dotnet ef --startup-project ..\Matbox.WEB\ migrations add InitialMaterials --context MaterialsDbContext
-4. dotnet ef --startup-project ..\Matbox.WEB\ database update --context UsersDbContext
-5. dotnet ef --startup-project ..\Matbox.WEB\ database update --context MaterialsDbContext
+2. dotnet ef --startup-project ..\..\Matbox.WEB\ migrations add InitialUsers --context UsersDbContext
+3. dotnet ef --startup-project ..\..\Matbox.WEB\ migrations add InitialMaterials --context MaterialsDbContext
+4. dotnet ef --startup-project ..\..\Matbox.WEB\ database update --context UsersDbContext
+5. dotnet ef --startup-project ..\..\Matbox.WEB\ database update --context MaterialsDbContext
 
 # WebAPI methods
 Swagger available on localhost:[port]/
