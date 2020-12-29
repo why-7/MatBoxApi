@@ -98,7 +98,7 @@ namespace Matbox.WEB.Controllers
         }
         
         // adds new material to the app (in the request body, you must pass the file and it's category.
-        // Possible categories of material: Презентация, Приложение, Другое)
+        // Possible categories of material: Presentation, App, Other)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost("AddNewMaterial")]
         public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)

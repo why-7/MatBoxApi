@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Matbox.BLL.Exceptions;
-using Matbox.BLL;
 using Matbox.DAL.DTO;
 using Matbox.DAL.Models;
 using Matbox.DAL.Services;
@@ -35,9 +35,9 @@ namespace Matbox.BLL.Services
         
         public IEnumerable<MaterialDto> GetInfoWithFilters(FiltersDto dto)
         {
-            if (CheckCategory(dto.category) == 0)
+            if (Enum.IsDefined(typeof(Categories), dto.category) == false)
             {
-                throw new WrongCategoryException("Wrong category. Use: Презентация, Приложение, Другое");
+                throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
             if (dto.minSize < 0 || dto.maxSize < 0)
@@ -91,9 +91,9 @@ namespace Matbox.BLL.Services
                                                       " is already in the database.");
             }
 
-            if (CheckCategory(dto.category) == 0)
+            if (Enum.IsDefined(typeof(Categories), dto.category) == false)
             {
-                throw new WrongCategoryException("Wrong category. Use: Презентация, Приложение, Другое");
+                throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
             await _dbService.AddNewMaterialToDb(dto);
@@ -121,9 +121,9 @@ namespace Matbox.BLL.Services
                 throw new MaterialNotInDbException("Material " + dto.materialName + " is not in the database.");
             }
             
-            if (CheckCategory(dto.category) == 0)
+            if (Enum.IsDefined(typeof(Categories), dto.category) == false)
             {
-                throw new WrongCategoryException("Wrong category. Use: Презентация, Приложение, Другое");
+                throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
             _dbService.ChangeCategoryOfMaterial(dto.materialName, dto.category);
@@ -131,21 +131,6 @@ namespace Matbox.BLL.Services
             return dto.materialName + " category has been changed to " + dto.category;
         }
 
-        private int CheckCategory(string category)
-        {
-            switch (category)
-            {
-                case "Презентация":
-                    return 1;
-                case "Приложение":
-                    return 1;
-                case "Другое":
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
-        
         private IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
         {
             var materialDtos = new List<MaterialDto>();
@@ -165,5 +150,12 @@ namespace Matbox.BLL.Services
 
             return materialDtos;
         }
+    }
+    
+    enum Categories
+    {
+        App,
+        Presentation,
+        Other
     }
 }
