@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
 using Matbox.BLL.DTO;
+using Matbox.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,9 +16,9 @@ namespace Matbox.WEB.Controllers
     {
         private readonly MaterialsService _materialsService;
 
-        public MaterialsController()
+        public MaterialsController(MaterialsDbContext context)
         {
-            _materialsService = new MaterialsService();
+            _materialsService = new MaterialsService(context);
         }
 
         // will return all materials that are stored in the application

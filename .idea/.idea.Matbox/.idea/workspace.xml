@@ -24,11 +24,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0298a9ff-18ff-4d00-aeb1-914cb3baeab2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/Matbox.BLL/Services/MaterialsService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.BLL/Services/MaterialsService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Matbox.DAL/DTO/FilesDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.BLL/DTO/FilesDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Matbox.DAL/DTO/FiltersDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.BLL/DTO/FiltersDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Matbox.DAL/DTO/MaterialDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.BLL/DTO/MaterialDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Matbox.DAL/Services/DbService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.DAL/Services/DbService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Matbox.Tests/MaterialsControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.Tests/MaterialsControllerTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Matbox.WEB/Controllers/MaterialsController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Matbox.WEB/Controllers/MaterialsController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,10 +44,10 @@
         <option value="$PROJECT_DIR$/Matbox.BLL/DTO/FilesDto.cs" />
         <option value="$PROJECT_DIR$/Matbox.BLL/DTO/FiltersDto.cs" />
         <option value="$PROJECT_DIR$/Matbox.BLL/DTO/MaterialDto.cs" />
-        <option value="$PROJECT_DIR$/Matbox.WEB/Controllers/MaterialsController.cs" />
         <option value="$PROJECT_DIR$/Matbox.Tests/MaterialsControllerTests.cs" />
         <option value="$PROJECT_DIR$/Matbox.DAL/Services/DbService.cs" />
         <option value="$PROJECT_DIR$/Matbox.BLL/Services/MaterialsService.cs" />
+        <option value="$PROJECT_DIR$/Matbox.WEB/Controllers/MaterialsController.cs" />
       </list>
     </option>
   </component>
@@ -105,7 +101,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610358720995</updated>
-      <workItem from="1610358734572" duration="1148000" />
+      <workItem from="1610358734572" duration="1660000" />
     </task>
     <servers />
   </component>

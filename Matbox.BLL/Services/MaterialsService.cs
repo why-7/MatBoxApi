@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Matbox.BLL.Exceptions;
@@ -15,9 +14,9 @@ namespace Matbox.BLL.Services
     {
         private readonly DbService _dbService;
 
-        public MaterialsService()
+        public MaterialsService(MaterialsDbContext context)
         {
-            _dbService = new DbService();
+            _dbService = new DbService(context);
         }
 
         public IEnumerable<MaterialDto> GetAllMaterials()

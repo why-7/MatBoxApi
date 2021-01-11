@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Matbox.DAL.Services
 {
@@ -13,12 +12,9 @@ namespace Matbox.DAL.Services
     {
         private readonly MaterialsDbContext _context;
 
-        public DbService()
-            {
-                _context = new MaterialsDbContext
-                (new DbContextOptionsBuilder<MaterialsDbContext>()
-                    .UseNpgsql("Host=postgres_image;Port=5432;Username=postgres;Database=postgres;")
-                    .Options);
+        public DbService(MaterialsDbContext context)
+        {
+            _context = context;
         }
 
         public IEnumerable<Material> GetAllMaterials()

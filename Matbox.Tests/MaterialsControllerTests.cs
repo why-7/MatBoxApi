@@ -3,20 +3,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Matbox.BLL.Services;
 using Matbox.DAL.Models;
 using Matbox.WEB.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace Matbox.Tests
 {
     public class MaterialsControllerTests
     {
-        private readonly MaterialsController _controller = new MaterialsController();
+        private readonly MaterialsController _controller = new MaterialsController(new MaterialsDbContext
+        (new DbContextOptionsBuilder<MaterialsDbContext>()
+            .UseNpgsql("Host=postgres_image;Port=5432;Username=postgres;Database=postgres;")
+            .Options));
 
         [SetUp]
         public void Setup()
