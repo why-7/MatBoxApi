@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.Models;
-using Matbox.DAL.DTO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Matbox.DAL.Services
 {
@@ -12,9 +13,12 @@ namespace Matbox.DAL.Services
     {
         private readonly MaterialsDbContext _context;
 
-        public DbService(MaterialsDbContext context)
+        public DbService()
             {
-                _context = context;
+                _context = new MaterialsDbContext
+                (new DbContextOptionsBuilder<MaterialsDbContext>()
+                    .UseNpgsql("Host=postgres_image;Port=5432;Username=postgres;Database=postgres;")
+                    .Options);
         }
 
         public IEnumerable<Material> GetAllMaterials()
@@ -56,38 +60,38 @@ namespace Matbox.DAL.Services
                 .First(x => x.category != null).category;
         }
 
-        public async Task AddNewMaterialToDb(FilesDto dto, string nameInLocalStorage)
+        public async Task AddNewMaterialToDb(IFormFile uploadedFile, string category, string nameInLocalStorage)
         {
             var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
             await using (var fileStream = new FileStream(path, FileMode.Create))
             {
-                await dto.uploadedFile.CopyToAsync(fileStream);
+                await uploadedFile.CopyToAsync(fileStream);
             }
-            await _context.Materials.AddAsync(new Material { materialName = dto.uploadedFile.FileName, 
-                category = dto.category, 
+            await _context.Materials.AddAsync(new Material { materialName = uploadedFile.FileName, 
+                category = category, 
                 metaDateTime = DateTime.Now, versionNumber = 1, 
-                metaFileSize = dto.uploadedFile.Length, path = path }); 
+                metaFileSize = uploadedFile.Length, path = path }); 
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddNewVersionOfMaterialToDb(FilesDto dto, string nameInLocalStorage)
+        public async Task AddNewVersionOfMaterialToDb(IFormFile uploadedFile, string nameInLocalStorage)
         {
-            var newNumber = GetCountOfMaterials(dto.uploadedFile.FileName) + 1;
-            var category = GetCategoryOfMaterial(dto.uploadedFile.FileName);
+            var newNumber = GetCountOfMaterials(uploadedFile.FileName) + 1;
+            var category = GetCategoryOfMaterial(uploadedFile.FileName);
 
             var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
             await using (var fileStream = new FileStream(path, FileMode.Create))
             {
-                await dto.uploadedFile.CopyToAsync(fileStream);
+                await uploadedFile.CopyToAsync(fileStream);
             }
 
             await _context.Materials.AddAsync(new Material
             {
-                materialName = dto.uploadedFile.FileName,
+                materialName = uploadedFile.FileName,
                 category = category,
                 metaDateTime = DateTime.Now,
                 versionNumber = newNumber,
-                metaFileSize = dto.uploadedFile.Length,
+                metaFileSize = uploadedFile.Length,
                 path = path
             });
             await _context.SaveChangesAsync();

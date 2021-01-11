@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Matbox.BLL.Exceptions;
-using Matbox.DAL.DTO;
+using Matbox.BLL.DTO;
 using Matbox.DAL.Models;
 using Matbox.DAL.Services;
 
@@ -15,9 +15,9 @@ namespace Matbox.BLL.Services
     {
         private readonly DbService _dbService;
 
-        public MaterialsService(MaterialsDbContext context)
+        public MaterialsService()
         {
-            _dbService = new DbService(context);
+            _dbService = new DbService();
         }
 
         public IEnumerable<MaterialDto> GetAllMaterials()
@@ -97,7 +97,7 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            await _dbService.AddNewMaterialToDb(dto, GenRandomNameInLocalStorage());
+            await _dbService.AddNewMaterialToDb(dto.uploadedFile, dto.category, GenRandomNameInLocalStorage());
             
             return "Material " + dto.uploadedFile.FileName + " was created";
         }
@@ -110,7 +110,7 @@ namespace Matbox.BLL.Services
                                                    " is not in the database.");
             }
 
-            await _dbService.AddNewVersionOfMaterialToDb(dto, GenRandomNameInLocalStorage());
+            await _dbService.AddNewVersionOfMaterialToDb(dto.uploadedFile, GenRandomNameInLocalStorage());
             
             return "New version of material" + dto.uploadedFile.FileName+ " was upload";
         }

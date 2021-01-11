@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Matbox.DAL.DTO
+namespace Matbox.BLL.DTO
 {
     public class FilesDto
     {

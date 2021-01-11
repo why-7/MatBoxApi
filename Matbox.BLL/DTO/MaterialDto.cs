@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Matbox.DAL.DTO
+namespace Matbox.BLL.DTO
 {
     public class MaterialDto
     {
