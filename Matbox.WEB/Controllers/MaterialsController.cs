@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
-using Matbox.BLL.DTO;
 using Matbox.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +25,7 @@ namespace Matbox.WEB.Controllers
         // will return all materials that are stored in the application
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<MaterialDto> GetAllMaterials()
+        public IEnumerable<Material> GetAllMaterials()
         {
             return _materialsService.GetAllMaterials();
         }
@@ -38,7 +39,7 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                return _materialsService.GetInfoAboutMaterial( new MaterialDto { materialName = materialName} );
+                return _materialsService.GetInfoAboutMaterial(materialName);
             }
             catch (Exception e)
             {
@@ -55,8 +56,7 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                return _materialsService.GetInfoWithFilters( new FiltersDto { category = category, minSize = minSize, 
-                    maxSize = maxSize });
+                return _materialsService.GetInfoWithFilters(category, minSize, maxSize);
             }
             catch (Exception e)
             {
@@ -73,7 +73,7 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                var fs = _materialsService.GetActualMaterial(new MaterialDto { materialName = materialName });
+                var fs = _materialsService.GetActualMaterial(materialName);
                 return File(fs, "application/octet-stream", materialName);
             }
             catch (Exception e)
@@ -91,8 +91,7 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                var fs = _materialsService.GetSpecificMaterial(new MaterialDto { materialName = materialName, 
-                    versionNumber = versionOfMaterial });
+                var fs = _materialsService.GetSpecificMaterial(materialName, versionOfMaterial);
                 return File(fs, "application/octet-stream", materialName);
             }
             catch (Exception e)
@@ -109,8 +108,15 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                var ans =  await _materialsService.AddNewMaterial(new FilesDto { uploadedFile = uploadedFile, 
-                    category = category });
+                byte[] uploadedFileBytes = null;
+                // считываем переданный файл в массив байтов
+                using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
+                {
+                    uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
+                }
+                
+                var ans =  await _materialsService.AddNewMaterial(uploadedFileBytes, GetHash(uploadedFile), 
+                    uploadedFile.FileName, category);
                 return Ok(ans);
             }
             catch (Exception e)
@@ -127,8 +133,15 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                var ans =  await _materialsService.AddNewVersionOfMaterial(new FilesDto 
-                    { uploadedFile = uploadedFile });
+                byte[] uploadedFileBytes = null;
+                // считываем переданный файл в массив байтов
+                using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
+                {
+                    uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
+                }
+                
+                var ans =  await _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
+                    GetHash(uploadedFile), uploadedFile.FileName);
                 return Ok(ans);
             }
             catch (Exception e)
@@ -145,13 +158,29 @@ namespace Matbox.WEB.Controllers
         {
             try
             {
-                var ans =  _materialsService.ChangeCategory(new MaterialDto { materialName = materialName, 
-                    category = newCategory });
+                var ans =  _materialsService.ChangeCategory(materialName, newCategory);
                 return Ok(ans);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+        
+        public static string GetHash(IFormFile file)
+        {
+            byte[] fileBytes = null;
+
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                fileBytes = memoryStream.ToArray();
+            }
+
+            using (var md5 = MD5.Create())
+            {
+                var hash = md5.ComputeHash(fileBytes);
+                return BitConverter.ToString(hash).Replace("-", "").ToLower();
             }
         }
     }

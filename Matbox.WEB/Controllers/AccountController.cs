@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.Models;
-using Matbox.WEB.ViewModels;
+using Matbox.WEB.Dto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +43,7 @@ namespace Matbox.WEB.Controllers
         }
         
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterDto model)
         { 
             if (!ModelState.IsValid)
             {
@@ -69,12 +69,12 @@ namespace Matbox.WEB.Controllers
         [HttpGet("Login")]
         public IActionResult Login(string returnUrl = null)
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View(new LoginDto { ReturnUrl = returnUrl });
         }
  
         [HttpPost("Login")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginDto model)
         {
             if (ModelState.IsValid)
             {
@@ -138,7 +138,7 @@ namespace Matbox.WEB.Controllers
             // получем список ролей пользователя
             var userRoles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
-            var model = new ChangeRoleViewModel
+            var model = new ChangeRoleDto
             {
                 UserId = user.Id,
                 UserEmail = user.Email,

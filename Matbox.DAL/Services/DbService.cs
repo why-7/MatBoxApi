@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace Matbox.DAL.Services
 {
@@ -56,39 +55,40 @@ namespace Matbox.DAL.Services
                 .First(x => x.category != null).category;
         }
 
-        public async Task AddNewMaterialToDb(IFormFile uploadedFile, string category, string nameInLocalStorage)
+        public async Task AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, string hash)
         {
-            var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
-            await using (var fileStream = new FileStream(path, FileMode.Create))
+            var path = "../Matbox.DAL/Files/" + hash;
+            if (GetCountOfHash(hash) == 0)
             {
-                await uploadedFile.CopyToAsync(fileStream);
+                await File.WriteAllBytesAsync(path, uploadedFile);
             }
-            await _context.Materials.AddAsync(new Material { materialName = uploadedFile.FileName, 
+
+            await _context.Materials.AddAsync(new Material { materialName = fileName, 
                 category = category, 
                 metaDateTime = DateTime.Now, versionNumber = 1, 
-                metaFileSize = uploadedFile.Length, path = path }); 
+                metaFileSize = uploadedFile.Length, path = path, hash = hash }); 
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddNewVersionOfMaterialToDb(IFormFile uploadedFile, string nameInLocalStorage)
+        public async Task AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, string hash)
         {
-            var newNumber = GetCountOfMaterials(uploadedFile.FileName) + 1;
-            var category = GetCategoryOfMaterial(uploadedFile.FileName);
+            var newNumber = GetCountOfMaterials(fileName) + 1;
+            var category = GetCategoryOfMaterial(fileName);
 
-            var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
-            await using (var fileStream = new FileStream(path, FileMode.Create))
+            var path = "../Matbox.DAL/Files/" + hash;
+            if (GetCountOfHash(hash) == 0)
             {
-                await uploadedFile.CopyToAsync(fileStream);
+                await File.WriteAllBytesAsync(path, uploadedFile);
             }
 
             await _context.Materials.AddAsync(new Material
             {
-                materialName = uploadedFile.FileName,
+                materialName = fileName,
                 category = category,
                 metaDateTime = DateTime.Now,
                 versionNumber = newNumber,
                 metaFileSize = uploadedFile.Length,
-                path = path
+                path = path, hash = hash
             });
             await _context.SaveChangesAsync();
         }
@@ -97,6 +97,11 @@ namespace Matbox.DAL.Services
         {
             return GetAllMaterials().Where(x => x.materialName == materialName)
                 .First(x => x.versionNumber == version).path;
+        }
+
+        public int GetCountOfHash(string hash)
+        {
+            return GetAllMaterials().Count(x => x.hash == hash);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Matbox.DAL.Models;
-using Matbox.WEB.ViewModels;
+using Matbox.WEB.Dto;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Matbox.WEB.Controllers
@@ -70,7 +70,7 @@ namespace Matbox.WEB.Controllers
             if (user == null) return NotFound();
             var userRoles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
-            var model = new ChangeRoleViewModel
+            var model = new ChangeRoleDto
             {
                 UserId = user.Id,
                 UserEmail = user.Email,
@@ -109,7 +109,7 @@ namespace Matbox.WEB.Controllers
         
         [Authorize(Roles = "Admin")]
         [HttpPost("CreateUser")]
-        public async Task<IActionResult> CreateUser(RegisterViewModel model)
+        public async Task<IActionResult> CreateUser(RegisterDto model)
         { 
             if (!ModelState.IsValid)
             {
