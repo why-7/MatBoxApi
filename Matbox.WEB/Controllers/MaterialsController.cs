@@ -35,16 +35,9 @@ namespace Matbox.WEB.Controllers
         [Route("info/{materialName}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public object GetInfoAboutMaterial(string materialName)
+        public IEnumerable<Material> GetInfoAboutMaterial(string materialName)
         {
-            try
-            {
-                return _materialsService.GetInfoAboutMaterial(materialName);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            return _materialsService.GetInfoAboutMaterial(materialName);
         }
         
         // will return information about all versions of materials of a certain category and size (you must
@@ -52,16 +45,9 @@ namespace Matbox.WEB.Controllers
         [Route("info/{category}/{minSize}/{maxSize}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public object GetInfoWithFilters(string category, long minSize, long maxSize)
+        public IEnumerable<Material> GetInfoWithFilters(string category, long minSize, long maxSize)
         {
-            try
-            {
-                return _materialsService.GetInfoWithFilters(category, minSize, maxSize);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            return _materialsService.GetInfoWithFilters(category, minSize, maxSize);
         }
 
         // will return the latest version of the material for download (you must pass the materialName
@@ -71,15 +57,8 @@ namespace Matbox.WEB.Controllers
         [HttpGet]
         public IActionResult GetActualMaterial(string materialName)
         {
-            try
-            {
-                var fs = _materialsService.GetActualMaterial(materialName);
-                return File(fs, "application/octet-stream", materialName);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            var fs = _materialsService.GetActualMaterial(materialName);
+            return File(fs, "application/octet-stream", materialName);
         }
         
         // will return a specific version of the material for download (you must pass the name and version
@@ -87,99 +66,69 @@ namespace Matbox.WEB.Controllers
         [Route("{materialName}/{versionOfMaterial}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public object GetSpecificMaterial(string materialName, int versionOfMaterial)
+        public IActionResult GetSpecificMaterial(string materialName, int versionOfMaterial)
         {
-            try
-            {
-                var fs = _materialsService.GetSpecificMaterial(materialName, versionOfMaterial);
-                return File(fs, "application/octet-stream", materialName);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            var fs = _materialsService.GetSpecificMaterial(materialName, versionOfMaterial);
+            return File(fs, "application/octet-stream", materialName);
         }
         
         // adds new material to the app (in the request body, you must pass the file and it's category.
         // Possible categories of material: Presentation, App, Other)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost]
-        public async Task<ObjectResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
+        public async Task<IActionResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
-            try
+            byte[] uploadedFileBytes = null;
+            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
             {
-                byte[] uploadedFileBytes = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
-                {
-                    uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
-                }
-                
-                var ans =  await _materialsService.AddNewMaterial(uploadedFileBytes, GetHash(uploadedFile), 
-                    uploadedFile.FileName, category);
-                return Ok(ans);
+                uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
             }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            
+            var id =  await _materialsService.AddNewMaterial(uploadedFileBytes, GetHash(uploadedFile), 
+                uploadedFile.FileName, category);
+            return Ok(id);
         }
         
         // adds new version of material to the app (in the request body, you must pass the file)
         [Route("newVersion")]
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost]
-        public async Task<ObjectResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
+        public async Task<IActionResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
-            try
+            byte[] uploadedFileBytes = null;
+            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
             {
-                byte[] uploadedFileBytes = null;
-                // считываем переданный файл в массив байтов
-                using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
-                {
-                    uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
-                }
-                
-                var ans =  await _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
-                    GetHash(uploadedFile), uploadedFile.FileName);
-                return Ok(ans);
+                uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
             }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            
+            var id =  await _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
+                GetHash(uploadedFile), uploadedFile.FileName);
+            return Ok(id);
         }
 
         // changes the category of the material in all versions
         // (in the request body, you must pass the materialName and newCategory)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPatch]
-        public ObjectResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
+        public IActionResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
         {
-            try
-            {
-                var ans =  _materialsService.ChangeCategory(materialName, newCategory);
-                return Ok(ans);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            var listOfId =  _materialsService.ChangeCategory(materialName, newCategory);
+            return Ok(listOfId);
         }
-        
-        public static string GetHash(IFormFile file)
+
+        private static string GetHash(IFormFile uploadedFile)
         {
-            byte[] fileBytes = null;
+            byte[] uploadedFileBytes = null;
 
             using (var memoryStream = new MemoryStream())
             {
-                file.CopyTo(memoryStream);
-                fileBytes = memoryStream.ToArray();
+                uploadedFile.CopyTo(memoryStream);
+                uploadedFileBytes = memoryStream.ToArray();
             }
 
             using (var md5 = MD5.Create())
             {
-                var hash = md5.ComputeHash(fileBytes);
+                var hash = md5.ComputeHash(uploadedFileBytes);
                 return BitConverter.ToString(hash).Replace("-", "").ToLower();
             }
         }

@@ -80,11 +80,11 @@ namespace Matbox.BLL.Services
             return new FileStream(path, FileMode.Open);
         }
         
-        public async Task<string> AddNewMaterial(byte[] uploadedFileBytes, string hash, string fileName, string category)
+        public async Task<int> AddNewMaterial(byte[] uploadedFileBytes, string hash, string fileName, string category)
         {
             if (_dbService.GetCountOfMaterials(fileName) > 0) 
             {
-                throw new MaterialAlredyInDbException("Material " + fileName + 
+                throw new MaterialAlreadyInDbException("Material " + fileName + 
                                                       " is already in the database.");
             }
 
@@ -93,12 +93,12 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            await _dbService.AddNewMaterialToDb(fileName, uploadedFileBytes, category, hash);
+            var id = await _dbService.AddNewMaterialToDb(fileName, uploadedFileBytes, category, hash);
             
-            return "Material " + fileName + " was created";
+            return id;
         }
 
-        public async Task<string> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string hash, string fileName)
+        public async Task<int> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string hash, string fileName)
         {
             if (_dbService.GetCountOfMaterials(fileName) == 0)
             {
@@ -106,12 +106,12 @@ namespace Matbox.BLL.Services
                                                    " is not in the database.");
             }
 
-            await _dbService.AddNewVersionOfMaterialToDb(fileName, uploadedFileBytes, hash);
+            var id = await _dbService.AddNewVersionOfMaterialToDb(fileName, uploadedFileBytes, hash);
             
-            return "New version of material" + fileName + " was upload";
+            return id;
         }
         
-        public string ChangeCategory(string materialName, string category)
+        public List<int> ChangeCategory(string materialName, string category)
         {
             if (_dbService.GetCountOfMaterials(materialName) == 0)
             {
@@ -123,9 +123,9 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            _dbService.ChangeCategoryOfMaterial(materialName, category);
+            var listOfId = _dbService.ChangeCategoryOfMaterial(materialName, category);
             
-            return materialName + " category has been changed to " + category;
+            return listOfId;
         }
     }
 

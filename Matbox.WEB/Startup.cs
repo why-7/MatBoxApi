@@ -1,6 +1,9 @@
+using System.Net;
+using System.Threading.Tasks;
 using Matbox.DAL.Models;
 using Matbox.WEB.Logger;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -45,6 +48,26 @@ namespace Matbox.WEB
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseExceptionHandler(new ExceptionHandlerOptions
+            {
+                ExceptionHandler = c =>
+                {
+                    var exception = c.Features.Get<IExceptionHandlerFeature>();
+                    var statusCode = exception.Error.GetType().Name switch
+                    {
+                        "MaterialAlreadyInDbException" => HttpStatusCode.BadRequest,
+                        "WrongCategoryException" => HttpStatusCode.BadRequest,
+                        "WrongMaterialSizeException" => HttpStatusCode.BadRequest,
+                        "WrongMaterialVersionException" => HttpStatusCode.BadRequest,
+                        "MaterialNotInDbException" => HttpStatusCode.NotFound,
+                        _ => HttpStatusCode.ServiceUnavailable
+                    };
+                    c.Response.StatusCode = (int) statusCode;
+                    
+                    return Task.CompletedTask;
+                }
+            });
             
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

@@ -38,15 +38,18 @@ namespace Matbox.DAL.Services
                 .Where(x=> x.metaFileSize >= minSize);
         }
 
-        public void ChangeCategoryOfMaterial(string materialName, string newCategory)
+        public List<int> ChangeCategoryOfMaterial(string materialName, string newCategory)
         {
+            var listOfId = new List<int>();
             var materials = GetMaterialsByName(materialName);
             foreach (var material in materials)
             {
+                listOfId.Add(material.id);
                 material.category = newCategory;
                 _context.Materials.Update(material);
             }
             _context.SaveChanges();
+            return listOfId;
         }
 
         public string GetCategoryOfMaterial(string materialName)
@@ -55,22 +58,29 @@ namespace Matbox.DAL.Services
                 .First(x => x.category != null).category;
         }
 
-        public async Task AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, string hash)
+        public async Task<int> AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, string hash)
         {
             var path = "../Matbox.DAL/Files/" + hash;
             if (GetCountOfHash(hash) == 0)
             {
                 await File.WriteAllBytesAsync(path, uploadedFile);
             }
-
-            await _context.Materials.AddAsync(new Material { materialName = fileName, 
-                category = category, 
-                metaDateTime = DateTime.Now, versionNumber = 1, 
-                metaFileSize = uploadedFile.Length, path = path, hash = hash }); 
+            
+            var material = new Material
+            {
+                materialName = fileName,
+                category = category,
+                metaDateTime = DateTime.Now, versionNumber = 1,
+                metaFileSize = uploadedFile.Length, path = path, hash = hash
+            };
+            
+            await _context.Materials.AddAsync(material); 
             await _context.SaveChangesAsync();
+            
+            return material.id;
         }
 
-        public async Task AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, string hash)
+        public async Task<int> AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, string hash)
         {
             var newNumber = GetCountOfMaterials(fileName) + 1;
             var category = GetCategoryOfMaterial(fileName);
@@ -81,7 +91,7 @@ namespace Matbox.DAL.Services
                 await File.WriteAllBytesAsync(path, uploadedFile);
             }
 
-            await _context.Materials.AddAsync(new Material
+            var material = new Material
             {
                 materialName = fileName,
                 category = category,
@@ -89,8 +99,10 @@ namespace Matbox.DAL.Services
                 versionNumber = newNumber,
                 metaFileSize = uploadedFile.Length,
                 path = path, hash = hash
-            });
+            };
+            await _context.Materials.AddAsync(material);
             await _context.SaveChangesAsync();
+            return material.id;
         }
 
         public string GetPathToFileByNameAndVersion(string materialName, int version)
