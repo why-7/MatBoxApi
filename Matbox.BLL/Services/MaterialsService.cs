@@ -17,22 +17,22 @@ namespace Matbox.BLL.Services
             _dbService = new DbService(context);
         }
 
-        public IEnumerable<Material> GetAllMaterials()
+        public IEnumerable<Material> GetAllMaterials(string userId)
         {
-            return _dbService.GetAllMaterials();
+            return _dbService.GetAllMaterials(userId);
         }
         
-        public IEnumerable<Material> GetInfoAboutMaterial(string materialName)
+        public IEnumerable<Material> GetInfoAboutMaterial(string materialName, string userId)
         {
-            if (_dbService.GetCountOfMaterials(materialName) == 0)
+            if (_dbService.GetCountOfMaterials(materialName, userId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + materialName + " is not in the database.");
             }
 
-            return _dbService.GetMaterialsByName(materialName);
+            return _dbService.GetMaterialsByName(materialName, userId);
         }
         
-        public IEnumerable<Material> GetInfoWithFilters(string category, long minSize, long maxSize)
+        public IEnumerable<Material> GetInfoWithFilters(string category, long minSize, long maxSize, string userId)
         {
             if (Enum.IsDefined(typeof(Categories), category) == false)
             {
@@ -45,44 +45,45 @@ namespace Matbox.BLL.Services
                                                      "size must be greater than -1.");
             }
 
-            return _dbService.GetMaterialsByNameAndSizes(category, minSize, maxSize);
+            return _dbService.GetMaterialsByNameAndSizes(category, minSize, maxSize, userId);
         }
         
-        public FileStream GetActualMaterial(string materialName)
+        public FileStream GetActualMaterial(string materialName, string userId)
         {
-            if (_dbService.GetCountOfMaterials(materialName) == 0)
+            if (_dbService.GetCountOfMaterials(materialName, userId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + materialName + " is not in the database.");
             }
 
-            var actualVersion = _dbService.GetCountOfMaterials(materialName);
+            var actualVersion = _dbService.GetCountOfMaterials(materialName, userId);
 
-            var path = _dbService.GetPathToFileByNameAndVersion(materialName, actualVersion);
+            var path = _dbService.GetPathToFileByNameAndVersion(materialName, actualVersion, userId);
 
             return new FileStream(path, FileMode.Open);
         }
         
-        public FileStream GetSpecificMaterial(string materialName, int versionNumber)
+        public FileStream GetSpecificMaterial(string materialName, int versionNumber, string userId)
         {
-            if (_dbService.GetCountOfMaterials(materialName) == 0) 
+            if (_dbService.GetCountOfMaterials(materialName, userId) == 0) 
             {
                 throw new MaterialNotInDbException("Material " + materialName + " is not in the database.");
             }
             
-            if (_dbService.GetCountOfMaterials(materialName) < versionNumber || 
+            if (_dbService.GetCountOfMaterials(materialName, userId) < versionNumber || 
                 versionNumber <= 0)
             {
                 throw new WrongMaterialVersionException("Wrong material version");
             }
 
-            var path = _dbService.GetPathToFileByNameAndVersion(materialName, versionNumber);
+            var path = _dbService.GetPathToFileByNameAndVersion(materialName, versionNumber, userId);
 
             return new FileStream(path, FileMode.Open);
         }
         
-        public async Task<int> AddNewMaterial(byte[] uploadedFileBytes, string hash, string fileName, string category)
+        public async Task<int> AddNewMaterial(byte[] uploadedFileBytes, string hash, string fileName, 
+            string category, string userId)
         {
-            if (_dbService.GetCountOfMaterials(fileName) > 0) 
+            if (_dbService.GetCountOfMaterials(fileName, userId) > 0) 
             {
                 throw new MaterialAlreadyInDbException("Material " + fileName + 
                                                       " is already in the database.");
@@ -93,27 +94,28 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var id = await _dbService.AddNewMaterialToDb(fileName, uploadedFileBytes, category, hash);
+            var id = await _dbService.AddNewMaterialToDb(fileName, uploadedFileBytes, category, hash, userId);
             
             return id;
         }
 
-        public async Task<int> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string hash, string fileName)
+        public async Task<int> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string hash, 
+            string fileName, string userId)
         {
-            if (_dbService.GetCountOfMaterials(fileName) == 0)
+            if (_dbService.GetCountOfMaterials(fileName, userId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + fileName + 
                                                    " is not in the database.");
             }
 
-            var id = await _dbService.AddNewVersionOfMaterialToDb(fileName, uploadedFileBytes, hash);
+            var id = await _dbService.AddNewVersionOfMaterialToDb(fileName, uploadedFileBytes, hash, userId);
             
             return id;
         }
         
-        public List<int> ChangeCategory(string materialName, string category)
+        public List<int> ChangeCategory(string materialName, string category, string userId)
         {
-            if (_dbService.GetCountOfMaterials(materialName) == 0)
+            if (_dbService.GetCountOfMaterials(materialName, userId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + materialName + " is not in the database.");
             }
@@ -123,7 +125,7 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var listOfId = _dbService.ChangeCategoryOfMaterial(materialName, category);
+            var listOfId = _dbService.ChangeCategoryOfMaterial(materialName, category, userId);
             
             return listOfId;
         }

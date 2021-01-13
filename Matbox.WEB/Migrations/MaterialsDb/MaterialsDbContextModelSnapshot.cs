@@ -44,6 +44,9 @@ namespace Matbox.WEB.Migrations.MaterialsDb
                     b.Property<string>("path")
                         .HasColumnType("text");
 
+                    b.Property<string>("userId")
+                        .HasColumnType("text");
+
                     b.Property<int>("versionNumber")
                         .HasColumnType("integer");
 

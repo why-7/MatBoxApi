@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Matbox.WEB.Migrations.MaterialsDb
 {
-    public partial class MaterialMig : Migration
+    public partial class MatMig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,8 @@ namespace Matbox.WEB.Migrations.MaterialsDb
                     hash = table.Column<string>(type: "text", nullable: true),
                     versionNumber = table.Column<int>(type: "integer", nullable: false),
                     metaDateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    metaFileSize = table.Column<double>(type: "double precision", nullable: false)
+                    metaFileSize = table.Column<double>(type: "double precision", nullable: false),
+                    userId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

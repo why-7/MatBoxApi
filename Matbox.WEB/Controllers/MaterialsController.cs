@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
@@ -27,7 +28,8 @@ namespace Matbox.WEB.Controllers
         [HttpGet]
         public IEnumerable<Material> GetAllMaterials()
         {
-            return _materialsService.GetAllMaterials();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _materialsService.GetAllMaterials(userId);
         }
 
         // will return information about all versions of the material (you must pass materialName
@@ -37,7 +39,9 @@ namespace Matbox.WEB.Controllers
         [HttpGet]
         public IEnumerable<Material> GetInfoAboutMaterial(string materialName)
         {
-            return _materialsService.GetInfoAboutMaterial(materialName);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            return _materialsService.GetInfoAboutMaterial(materialName, userId);
         }
         
         // will return information about all versions of materials of a certain category and size (you must
@@ -47,7 +51,9 @@ namespace Matbox.WEB.Controllers
         [HttpGet]
         public IEnumerable<Material> GetInfoWithFilters(string category, long minSize, long maxSize)
         {
-            return _materialsService.GetInfoWithFilters(category, minSize, maxSize);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            return _materialsService.GetInfoWithFilters(category, minSize, maxSize, userId);
         }
 
         // will return the latest version of the material for download (you must pass the materialName
@@ -57,7 +63,9 @@ namespace Matbox.WEB.Controllers
         [HttpGet]
         public IActionResult GetActualMaterial(string materialName)
         {
-            var fs = _materialsService.GetActualMaterial(materialName);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var fs = _materialsService.GetActualMaterial(materialName, userId);
             return File(fs, "application/octet-stream", materialName);
         }
         
@@ -68,7 +76,9 @@ namespace Matbox.WEB.Controllers
         [HttpGet]
         public IActionResult GetSpecificMaterial(string materialName, int versionOfMaterial)
         {
-            var fs = _materialsService.GetSpecificMaterial(materialName, versionOfMaterial);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var fs = _materialsService.GetSpecificMaterial(materialName, versionOfMaterial, userId);
             return File(fs, "application/octet-stream", materialName);
         }
         
@@ -78,6 +88,7 @@ namespace Matbox.WEB.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             byte[] uploadedFileBytes = null;
             using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
             {
@@ -85,7 +96,7 @@ namespace Matbox.WEB.Controllers
             }
             
             var id =  await _materialsService.AddNewMaterial(uploadedFileBytes, GetHash(uploadedFile), 
-                uploadedFile.FileName, category);
+                uploadedFile.FileName, category, userId);
             return Ok(id);
         }
         
@@ -95,6 +106,8 @@ namespace Matbox.WEB.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             byte[] uploadedFileBytes = null;
             using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
             {
@@ -102,7 +115,7 @@ namespace Matbox.WEB.Controllers
             }
             
             var id =  await _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
-                GetHash(uploadedFile), uploadedFile.FileName);
+                GetHash(uploadedFile), uploadedFile.FileName, userId);
             return Ok(id);
         }
 
@@ -112,7 +125,9 @@ namespace Matbox.WEB.Controllers
         [HttpPatch]
         public IActionResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
         {
-            var listOfId =  _materialsService.ChangeCategory(materialName, newCategory);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var listOfId =  _materialsService.ChangeCategory(materialName, newCategory, userId);
             return Ok(listOfId);
         }
 

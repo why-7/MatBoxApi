@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Matbox.WEB.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20210112122942_Initial")]
-    partial class Initial
+    [Migration("20210113170829_UserMig")]
+    partial class UserMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

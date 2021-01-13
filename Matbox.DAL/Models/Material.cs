@@ -12,5 +12,6 @@ namespace Matbox.DAL.Models
         public int versionNumber { get; set; }
         public DateTime metaDateTime { get; set; }
         public double metaFileSize { get; set; }
+        public string userId { get; set; }
     }
 }

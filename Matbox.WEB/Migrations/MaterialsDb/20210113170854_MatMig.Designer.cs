@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Matbox.WEB.Migrations.MaterialsDb
 {
     [DbContext(typeof(MaterialsDbContext))]
-    [Migration("20210112123042_MaterialMig")]
-    partial class MaterialMig
+    [Migration("20210113170854_MatMig")]
+    partial class MatMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -44,6 +44,9 @@ namespace Matbox.WEB.Migrations.MaterialsDb
                         .HasColumnType("double precision");
 
                     b.Property<string>("path")
+                        .HasColumnType("text");
+
+                    b.Property<string>("userId")
                         .HasColumnType("text");
 
                     b.Property<int>("versionNumber")

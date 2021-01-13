@@ -16,32 +16,32 @@ namespace Matbox.DAL.Services
             _context = context;
         }
 
-        public IEnumerable<Material> GetAllMaterials()
+        public IEnumerable<Material> GetAllMaterials(string userId)
         {
-            return _context.Materials;
+            return _context.Materials.Where(x => x.userId == userId);
         }
 
-        public int GetCountOfMaterials(string materialName)
+        public int GetCountOfMaterials(string materialName, string userId)
         {
-            return _context.Materials.Count(x => x.materialName == materialName);
+            return GetAllMaterials(userId).Count(x => x.materialName == materialName);
         }
 
-        public IEnumerable<Material> GetMaterialsByName(string materialName)
+        public IEnumerable<Material> GetMaterialsByName(string materialName, string userId)
         {
-            return _context.Materials.Where(x => x.materialName == materialName);
+            return GetAllMaterials(userId).Where(x => x.materialName == materialName);
         }
 
-        public IEnumerable<Material> GetMaterialsByNameAndSizes(string category, long minSize, long maxSize)
+        public IEnumerable<Material> GetMaterialsByNameAndSizes(string category, long minSize, long maxSize, string userId)
         {
-            return _context.Materials.Where(x => x.category == category)
+            return GetAllMaterials(userId).Where(x => x.category == category)
                 .Where(x=> x.metaFileSize <= maxSize)
                 .Where(x=> x.metaFileSize >= minSize);
         }
 
-        public List<int> ChangeCategoryOfMaterial(string materialName, string newCategory)
+        public List<int> ChangeCategoryOfMaterial(string materialName, string newCategory, string userId)
         {
             var listOfId = new List<int>();
-            var materials = GetMaterialsByName(materialName);
+            var materials = GetMaterialsByName(materialName, userId);
             foreach (var material in materials)
             {
                 listOfId.Add(material.id);
@@ -52,16 +52,17 @@ namespace Matbox.DAL.Services
             return listOfId;
         }
 
-        public string GetCategoryOfMaterial(string materialName)
+        private string GetCategoryOfMaterial(string materialName, string userId)
         {
-            return _context.Materials.Where(x => x.materialName == materialName)
+            return GetAllMaterials(userId).Where(x => x.materialName == materialName)
                 .First(x => x.category != null).category;
         }
 
-        public async Task<int> AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, string hash)
+        public async Task<int> AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, 
+            string hash, string userId)
         {
             var path = "../Matbox.DAL/Files/" + hash;
-            if (GetCountOfHash(hash) == 0)
+            if (GetCountOfHash(hash, userId) == 0)
             {
                 await File.WriteAllBytesAsync(path, uploadedFile);
             }
@@ -71,7 +72,7 @@ namespace Matbox.DAL.Services
                 materialName = fileName,
                 category = category,
                 metaDateTime = DateTime.Now, versionNumber = 1,
-                metaFileSize = uploadedFile.Length, path = path, hash = hash
+                metaFileSize = uploadedFile.Length, path = path, hash = hash, userId = userId
             };
             
             await _context.Materials.AddAsync(material); 
@@ -80,13 +81,14 @@ namespace Matbox.DAL.Services
             return material.id;
         }
 
-        public async Task<int> AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, string hash)
+        public async Task<int> AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, 
+            string hash, string userId)
         {
-            var newNumber = GetCountOfMaterials(fileName) + 1;
-            var category = GetCategoryOfMaterial(fileName);
+            var newNumber = GetCountOfMaterials(fileName, userId) + 1;
+            var category = GetCategoryOfMaterial(fileName, userId);
 
             var path = "../Matbox.DAL/Files/" + hash;
-            if (GetCountOfHash(hash) == 0)
+            if (GetCountOfHash(hash, userId) == 0)
             {
                 await File.WriteAllBytesAsync(path, uploadedFile);
             }
@@ -98,22 +100,22 @@ namespace Matbox.DAL.Services
                 metaDateTime = DateTime.Now,
                 versionNumber = newNumber,
                 metaFileSize = uploadedFile.Length,
-                path = path, hash = hash
+                path = path, hash = hash, userId = userId
             };
             await _context.Materials.AddAsync(material);
             await _context.SaveChangesAsync();
             return material.id;
         }
 
-        public string GetPathToFileByNameAndVersion(string materialName, int version)
+        public string GetPathToFileByNameAndVersion(string materialName, int version, string userId)
         {
-            return GetAllMaterials().Where(x => x.materialName == materialName)
+            return GetAllMaterials(userId).Where(x => x.materialName == materialName)
                 .First(x => x.versionNumber == version).path;
         }
 
-        public int GetCountOfHash(string hash)
+        private int GetCountOfHash(string hash, string userId)
         {
-            return GetAllMaterials().Count(x => x.hash == hash);
+            return GetAllMaterials(userId).Count(x => x.hash == hash);
         }
     }
 }
