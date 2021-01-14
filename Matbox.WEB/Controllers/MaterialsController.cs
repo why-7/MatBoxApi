@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
@@ -85,13 +86,13 @@ namespace Matbox.WEB.Controllers
         // Possible categories of material: Presentation, App, Other)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost]
-        public async Task<IActionResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
+        public IActionResult AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var uploadedFileBytes = GetBytesOfFile(uploadedFile).Result;
 
-            var id =  await _materialsService.AddNewMaterial(uploadedFileBytes, 
+            var id =  _materialsService.AddNewMaterial(uploadedFileBytes, 
                 uploadedFile.FileName, category, userId);
             return Ok(id);
         }
@@ -100,13 +101,13 @@ namespace Matbox.WEB.Controllers
         [Route("newVersion")]
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost]
-        public async Task<IActionResult> AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
+        public IActionResult AddNewVersionOfMaterial([FromForm]IFormFile uploadedFile)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var uploadedFileBytes = GetBytesOfFile(uploadedFile).Result;
             
-            var id =  await _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
+            var id = _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
                 uploadedFile.FileName, userId);
             return Ok(id);
         }
@@ -136,21 +137,15 @@ namespace Matbox.WEB.Controllers
         
         private IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
         {
-            var materialDtos = new List<MaterialDto>();
-
-            foreach (var material in materials)
-            {
-                materialDtos.Add(new MaterialDto
+            return materials.Select(material => new MaterialDto
                 {
                     materialName = material.materialName,
                     category = material.category,
                     versionNumber = material.versionNumber,
                     metaDateTime = material.metaDateTime,
                     metaFileSize = material.metaFileSize
-                });
-            }
-
-            return materialDtos;
+                })
+                .ToList();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Matbox.BLL.Enums;
 using Matbox.BLL.Exceptions;
 using Matbox.DAL.Models;
@@ -81,7 +80,7 @@ namespace Matbox.BLL.Services
             return new FileStream(path, FileMode.Open);
         }
         
-        public async Task<int> AddNewMaterial(byte[] uploadedFileBytes, string fileName, string category, string userId)
+        public int AddNewMaterial(byte[] uploadedFileBytes, string fileName, string category, string userId)
         {
             var hash = FileManager.GetHash(uploadedFileBytes);
             if (_dbService.GetCountOfMaterials(fileName, userId) > 0) 
@@ -95,12 +94,12 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var id = await _dbService.AddNewMaterialToDb(fileName, uploadedFileBytes, category, hash, userId);
+            var id = _dbService.AddNewMaterialToDb(fileName, uploadedFileBytes, category, hash, userId);
             
             return id;
         }
 
-        public async Task<int> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string fileName, string userId)
+        public int AddNewVersionOfMaterial(byte[] uploadedFileBytes, string fileName, string userId)
         {
             var hash = FileManager.GetHash(uploadedFileBytes);
             if (_dbService.GetCountOfMaterials(fileName, userId) == 0)
@@ -109,7 +108,7 @@ namespace Matbox.BLL.Services
                                                    " is not in the database.");
             }
 
-            var id = await _dbService.AddNewVersionOfMaterialToDb(fileName, uploadedFileBytes, hash, userId);
+            var id = _dbService.AddNewVersionOfMaterialToDb(fileName, uploadedFileBytes, hash, userId);
             
             return id;
         }

@@ -278,27 +278,27 @@ namespace Matbox.Tests
                     switch (caseNumber)
                     {
                         case 1:
-                            await _controller.AddNewMaterial(formFile, "Другое");
+                            _controller.AddNewMaterial(formFile, "Другое");
                             break;
                         case 2:
-                            await _controller.AddNewMaterial(formFile, "Другое");
-                            await _controller.AddNewMaterial(formFile, "Другое");
+                            _controller.AddNewMaterial(formFile, "Другое"); 
+                            _controller.AddNewMaterial(formFile, "Другое");
                             break;
                         case 3:
-                            await _controller.AddNewMaterial(formFile, "Другое");
-                            await _controller.AddNewVersionOfMaterial(formFile);
+                            _controller.AddNewMaterial(formFile, "Другое");
+                            _controller.AddNewVersionOfMaterial(formFile);
                             break;
                         case 4:
-                            await _controller.AddNewVersionOfMaterial(formFile);
+                            _controller.AddNewVersionOfMaterial(formFile);
                             break;
                         case 5:
-                            await _controller.AddNewMaterial(formFile, "Презентация");
+                            _controller.AddNewMaterial(formFile, "Презентация");
                             break;
                         case 6:
-                            await _controller.AddNewMaterial(formFile, "Приложение");
+                            _controller.AddNewMaterial(formFile, "Приложение");
                             break;
                         case 7:
-                            await _controller.AddNewMaterial(formFile, "xyz");
+                            _controller.AddNewMaterial(formFile, "xyz");
                             break;
                     }
                 }
