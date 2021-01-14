@@ -61,18 +61,15 @@ namespace Matbox.DAL.Services
         public async Task<int> AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, 
             string hash, string userId)
         {
-            var path = "../Matbox.DAL/Files/" + hash;
-            if (GetCountOfHash(hash, userId) == 0)
-            {
-                await File.WriteAllBytesAsync(path, uploadedFile);
-            }
-            
+            var path = FileManager.SaveFile(uploadedFile, hash, GetCountOfHash(hash)).Result;
+
             var material = new Material
             {
                 materialName = fileName,
                 category = category,
                 metaDateTime = DateTime.Now, versionNumber = 1,
-                metaFileSize = uploadedFile.Length, path = path, hash = hash, userId = userId
+                metaFileSize = uploadedFile.Length, 
+                path = path, hash = hash, userId = userId
             };
             
             await _context.Materials.AddAsync(material); 
@@ -87,11 +84,7 @@ namespace Matbox.DAL.Services
             var newNumber = GetCountOfMaterials(fileName, userId) + 1;
             var category = GetCategoryOfMaterial(fileName, userId);
 
-            var path = "../Matbox.DAL/Files/" + hash;
-            if (GetCountOfHash(hash, userId) == 0)
-            {
-                await File.WriteAllBytesAsync(path, uploadedFile);
-            }
+            var path = FileManager.SaveFile(uploadedFile, hash, GetCountOfHash(hash)).Result;
 
             var material = new Material
             {
@@ -113,9 +106,9 @@ namespace Matbox.DAL.Services
                 .First(x => x.versionNumber == version).path;
         }
 
-        private int GetCountOfHash(string hash, string userId)
+        private int GetCountOfHash(string hash)
         {
-            return GetAllMaterials(userId).Count(x => x.hash == hash);
+            return _context.Materials.Count(x => x.hash == hash);
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Matbox.BLL.Services;
 using Matbox.DAL.Models;
+using Matbox.WEB.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -26,10 +25,10 @@ namespace Matbox.WEB.Controllers
         // will return all materials that are stored in the application
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<Material> GetAllMaterials()
+        public IEnumerable<MaterialDto> GetAllMaterials()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return _materialsService.GetAllMaterials(userId);
+            return CastToMaterialDtos(_materialsService.GetAllMaterials(userId));
         }
 
         // will return information about all versions of the material (you must pass materialName
@@ -37,11 +36,11 @@ namespace Matbox.WEB.Controllers
         [Route("info/{materialName}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<Material> GetInfoAboutMaterial(string materialName)
+        public IEnumerable<MaterialDto> GetInfoAboutMaterial(string materialName)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return _materialsService.GetInfoAboutMaterial(materialName, userId);
+            return CastToMaterialDtos(_materialsService.GetInfoAboutMaterial(materialName, userId));
         }
         
         // will return information about all versions of materials of a certain category and size (you must
@@ -49,11 +48,11 @@ namespace Matbox.WEB.Controllers
         [Route("info/{category}/{minSize}/{maxSize}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<Material> GetInfoWithFilters(string category, long minSize, long maxSize)
+        public IEnumerable<MaterialDto> GetInfoWithFilters(string category, long minSize, long maxSize)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return _materialsService.GetInfoWithFilters(category, minSize, maxSize, userId);
+            return CastToMaterialDtos(_materialsService.GetInfoWithFilters(category, minSize, maxSize, userId));
         }
 
         // will return the latest version of the material for download (you must pass the materialName
@@ -89,13 +88,10 @@ namespace Matbox.WEB.Controllers
         public async Task<IActionResult> AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            byte[] uploadedFileBytes = null;
-            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
-            {
-                uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
-            }
-            
-            var id =  await _materialsService.AddNewMaterial(uploadedFileBytes, GetHash(uploadedFile), 
+
+            var uploadedFileBytes = GetBytesOfFile(uploadedFile).Result;
+
+            var id =  await _materialsService.AddNewMaterial(uploadedFileBytes, 
                 uploadedFile.FileName, category, userId);
             return Ok(id);
         }
@@ -108,14 +104,10 @@ namespace Matbox.WEB.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            byte[] uploadedFileBytes = null;
-            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
-            {
-                uploadedFileBytes = binaryReader.ReadBytes((int)uploadedFile.Length);
-            }
+            var uploadedFileBytes = GetBytesOfFile(uploadedFile).Result;
             
             var id =  await _materialsService.AddNewVersionOfMaterial(uploadedFileBytes, 
-                GetHash(uploadedFile), uploadedFile.FileName, userId);
+                uploadedFile.FileName, userId);
             return Ok(id);
         }
 
@@ -131,21 +123,34 @@ namespace Matbox.WEB.Controllers
             return Ok(listOfId);
         }
 
-        private static string GetHash(IFormFile uploadedFile)
+        private async Task<byte[]> GetBytesOfFile(IFormFile uploadedFile)
         {
             byte[] uploadedFileBytes = null;
 
-            using (var memoryStream = new MemoryStream())
+            await using var memoryStream = new MemoryStream();
+            await uploadedFile.CopyToAsync(memoryStream);
+            uploadedFileBytes = memoryStream.ToArray();
+
+            return uploadedFileBytes;
+        }
+        
+        private IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
+        {
+            var materialDtos = new List<MaterialDto>();
+
+            foreach (var material in materials)
             {
-                uploadedFile.CopyTo(memoryStream);
-                uploadedFileBytes = memoryStream.ToArray();
+                materialDtos.Add(new MaterialDto
+                {
+                    materialName = material.materialName,
+                    category = material.category,
+                    versionNumber = material.versionNumber,
+                    metaDateTime = material.metaDateTime,
+                    metaFileSize = material.metaFileSize
+                });
             }
 
-            using (var md5 = MD5.Create())
-            {
-                var hash = md5.ComputeHash(uploadedFileBytes);
-                return BitConverter.ToString(hash).Replace("-", "").ToLower();
-            }
+            return materialDtos;
         }
     }
 }

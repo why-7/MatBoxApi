@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Matbox.BLL.Enums;
 using Matbox.BLL.Exceptions;
 using Matbox.DAL.Models;
 using Matbox.DAL.Services;
@@ -80,9 +81,9 @@ namespace Matbox.BLL.Services
             return new FileStream(path, FileMode.Open);
         }
         
-        public async Task<int> AddNewMaterial(byte[] uploadedFileBytes, string hash, string fileName, 
-            string category, string userId)
+        public async Task<int> AddNewMaterial(byte[] uploadedFileBytes, string fileName, string category, string userId)
         {
+            var hash = FileManager.GetHash(uploadedFileBytes);
             if (_dbService.GetCountOfMaterials(fileName, userId) > 0) 
             {
                 throw new MaterialAlreadyInDbException("Material " + fileName + 
@@ -99,9 +100,9 @@ namespace Matbox.BLL.Services
             return id;
         }
 
-        public async Task<int> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string hash, 
-            string fileName, string userId)
+        public async Task<int> AddNewVersionOfMaterial(byte[] uploadedFileBytes, string fileName, string userId)
         {
+            var hash = FileManager.GetHash(uploadedFileBytes);
             if (_dbService.GetCountOfMaterials(fileName, userId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + fileName + 
@@ -129,12 +130,5 @@ namespace Matbox.BLL.Services
             
             return listOfId;
         }
-    }
-
-    enum Categories
-    {
-        App,
-        Presentation,
-        Other
     }
 }
