@@ -57,17 +57,17 @@ namespace Matbox.DAL.Services
                 .First(x => x.category != null).category;
         }
 
-        public int AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, 
-            string hash, string userId)
+        public int AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, string userId)
         {
+            var hash = FileManager.GetHash(uploadedFile);
             var path = FileManager.SaveFile(uploadedFile, hash, GetCountOfHash(hash)).Result;
 
             return SaveMaterial(fileName, category, uploadedFile.Length, path, hash, userId, 1).Result;
         }
 
-        public int AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, 
-            string hash, string userId)
+        public int AddNewVersionOfMaterialToDb(string fileName, byte[] uploadedFile, string userId)
         {
+            var hash = FileManager.GetHash(uploadedFile);
             var newNumber = GetCountOfMaterials(fileName, userId) + 1;
             var category = GetCategoryOfMaterial(fileName, userId);
 
