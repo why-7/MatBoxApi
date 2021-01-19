@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Matbox.DAL.Migrations.MaterialsDb
 {
     [DbContext(typeof(MaterialsDbContext))]
-    [Migration("20210119121647_Initial")]
-    partial class Initial
+    [Migration("20210119131137_MatMig")]
+    partial class MatMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,8 +28,8 @@ namespace Matbox.DAL.Migrations.MaterialsDb
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
-                    b.Property<string>("Category")
-                        .HasColumnType("text");
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Hash")
                         .HasColumnType("text");

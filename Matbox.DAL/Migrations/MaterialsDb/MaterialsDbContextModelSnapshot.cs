@@ -26,8 +26,8 @@ namespace Matbox.DAL.Migrations.MaterialsDb
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
-                    b.Property<string>("Category")
-                        .HasColumnType("text");
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Hash")
                         .HasColumnType("text");

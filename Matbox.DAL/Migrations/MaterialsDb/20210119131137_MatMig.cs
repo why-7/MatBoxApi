@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Matbox.DAL.Migrations.MaterialsDb
 {
-    public partial class Initial : Migration
+    public partial class MatMig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,7 @@ namespace Matbox.DAL.Migrations.MaterialsDb
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     MaterialName = table.Column<string>(type: "text", nullable: true),
-                    Category = table.Column<string>(type: "text", nullable: true),
+                    Category = table.Column<int>(type: "integer", nullable: false),
                     Hash = table.Column<string>(type: "text", nullable: true),
                     VersionNumber = table.Column<int>(type: "integer", nullable: false),
                     MetaDateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),

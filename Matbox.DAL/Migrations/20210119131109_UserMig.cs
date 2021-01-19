@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Matbox.DAL.Migrations
 {
-    public partial class Initial : Migration
+    public partial class UserMig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

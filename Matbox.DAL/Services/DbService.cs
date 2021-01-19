@@ -30,7 +30,7 @@ namespace Matbox.DAL.Services
             return GetAllMaterials(userId).Where(x => x.MaterialName == materialName);
         }
 
-        public IEnumerable<Material> GetMaterialsByNameAndSizes(string category, long minSize, 
+        public IEnumerable<Material> GetMaterialsByNameAndSizes(int category, long minSize, 
             long maxSize, string userId)
         {
             return GetAllMaterials(userId).Where(x => x.Category == category)
@@ -38,7 +38,7 @@ namespace Matbox.DAL.Services
                 .Where(x=> x.MetaFileSize >= minSize);
         }
 
-        public List<int> ChangeCategoryOfMaterial(string materialName, string newCategory, string userId)
+        public List<int> ChangeCategoryOfMaterial(string materialName, int newCategory, string userId)
         {
             var listOfId = new List<int>();
             var materials = GetMaterialsByName(materialName, userId);
@@ -52,13 +52,13 @@ namespace Matbox.DAL.Services
             return listOfId;
         }
 
-        private string GetCategoryOfMaterial(string materialName, string userId)
+        private int GetCategoryOfMaterial(string materialName, string userId)
         {
             return GetAllMaterials(userId).Where(x => x.MaterialName == materialName)
-                .First(x => x.Category != null).Category;
+                .First(x => x.Category > -1).Category;
         }
 
-        public int AddNewMaterialToDb(string fileName, byte[] uploadedFile, string category, string userId, string hash)
+        public int AddNewMaterialToDb(string fileName, byte[] uploadedFile, int category, string userId, string hash)
         {
             return SaveMaterial(fileName, category, uploadedFile.Length, hash, userId, 1).Result;
         }
@@ -77,7 +77,7 @@ namespace Matbox.DAL.Services
                 .First(x => x.VersionNumber == version).Hash;
         }
         
-        private async Task<int> SaveMaterial(string fileName, string category, double fileSize, 
+        private async Task<int> SaveMaterial(string fileName, int category, double fileSize, 
             string hash, string userId, int versionNumber)
         {
             var material = new Material

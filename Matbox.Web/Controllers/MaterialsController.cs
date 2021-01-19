@@ -52,7 +52,7 @@ namespace Matbox.Web.Controllers
         [Route("info/{category}/{minSize}/{maxSize}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<MaterialDto> GetInfoWithFilters(string category, long minSize, long maxSize)
+        public IEnumerable<MaterialDto> GetInfoWithFilters(int category, long minSize, long maxSize)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -92,7 +92,7 @@ namespace Matbox.Web.Controllers
         // Possible categories of material: Presentation, App, Other)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPost]
-        public IActionResult AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]string category)
+        public IActionResult AddNewMaterial([FromForm]IFormFile uploadedFile, [FromForm]int category)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -122,7 +122,7 @@ namespace Matbox.Web.Controllers
         // (in the request body, you must pass the materialName and newCategory)
         [Authorize(Roles = "Admin, Writer")]
         [HttpPatch]
-        public IActionResult ChangeCategory([FromForm]string materialName, [FromForm]string newCategory)
+        public IActionResult ChangeCategory([FromForm]string materialName, [FromForm]int newCategory)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
