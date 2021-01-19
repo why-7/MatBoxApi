@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Matbox.DAL.Models;
-using Matbox.WEB.Controllers;
+using Matbox.Web.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -66,7 +66,7 @@ namespace Matbox.Tests
             var materials = (IQueryable<Material>) _controller
                 .GetInfoWithFilters("Презентация", 0, 1);
             
-            Assert.AreEqual(materials.Count(x=> x.materialName == fileName), 1);
+            Assert.AreEqual(materials.Count(x=> x.MaterialName == fileName), 1);
         }
         
         [Test]
@@ -76,7 +76,7 @@ namespace Matbox.Tests
             var materials = (IQueryable<Material>) _controller
                 .GetInfoWithFilters("Приложение", 0, 1);
             
-            Assert.AreEqual(materials.Count(x=> x.materialName == fileName), 1);
+            Assert.AreEqual(materials.Count(x=> x.MaterialName == fileName), 1);
         }
         
         [Test]

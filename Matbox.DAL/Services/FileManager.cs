@@ -7,15 +7,16 @@ namespace Matbox.DAL.Services
 {
     public static class FileManager
     {
-        public static async Task<string> SaveFile(byte[] fileBytes, string hash, int countOfHash)
+        public static async Task<string> SaveFile(byte[] fileBytes)
         {
+            var hash = GetHash(fileBytes);
             var path = "../Matbox.DAL/Files/" + hash;
-            if (countOfHash == 0)
+            if (!File.Exists(path))
             {
                 await File.WriteAllBytesAsync(path, fileBytes);
             }
             
-            return path;
+            return hash;
         }
         
         public static string GetHash(byte[] uploadedFileBytes)

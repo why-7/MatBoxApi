@@ -60,9 +60,9 @@ namespace Matbox.BLL.Services
 
             var actualVersion = _dbService.GetCountOfMaterials(bm.materialName, bm.userId);
 
-            var path = _dbService.GetPathToFileByNameAndVersion(bm.materialName, actualVersion, bm.userId);
+            var hash = _dbService.GetFileHashByNameAndVersion(bm.materialName, actualVersion, bm.userId);
 
-            return new FileStream(path, FileMode.Open);
+            return new FileStream("../Matbox.DAL/Files/" + hash, FileMode.Open);
         }
         
         public FileStream GetSpecificMaterial(MaterialBm bm)
@@ -78,9 +78,9 @@ namespace Matbox.BLL.Services
                 throw new WrongMaterialVersionException("Wrong material version");
             }
 
-            var path = _dbService.GetPathToFileByNameAndVersion(bm.materialName, bm.versionNumber, bm.userId);
+            var hash = _dbService.GetFileHashByNameAndVersion(bm.materialName, bm.versionNumber, bm.userId);
 
-            return new FileStream(path, FileMode.Open);
+            return new FileStream("../Matbox.DAL/Files/" + hash, FileMode.Open);
         }
         
         public int AddNewMaterial(MaterialBm bm)
@@ -96,7 +96,8 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var id = _dbService.AddNewMaterialToDb(bm.materialName, bm.fileBytes, bm.category, bm.userId);
+            var hash = FileManager.SaveFile(bm.fileBytes).Result;
+            var id = _dbService.AddNewMaterialToDb(bm.materialName, bm.fileBytes, bm.category, bm.userId, hash);
             
             return id;
         }
@@ -109,7 +110,8 @@ namespace Matbox.BLL.Services
                                                    " is not in the database.");
             }
 
-            var id = _dbService.AddNewVersionOfMaterialToDb(bm.materialName, bm.fileBytes, bm.userId);
+            var hash = FileManager.SaveFile(bm.fileBytes).Result;
+            var id = _dbService.AddNewVersionOfMaterialToDb(bm.materialName, bm.fileBytes, bm.userId, hash);
             
             return id;
         }
