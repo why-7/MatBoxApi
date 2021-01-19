@@ -22,113 +22,113 @@ namespace Matbox.BLL.Services
 
         public IEnumerable<MaterialBm> GetAllMaterials(MaterialBm bm)
         {
-            return CastToMaterialBms(_dbService.GetAllMaterials(bm.userId));
+            return CastToMaterialBms(_dbService.GetAllMaterials(bm.UserId));
         }
 
         public IEnumerable<MaterialBm> GetInfoAboutMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) == 0)
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + bm.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
 
-            return CastToMaterialBms(_dbService.GetMaterialsByName(bm.materialName, bm.userId));
+            return CastToMaterialBms(_dbService.GetMaterialsByName(bm.MaterialName, bm.UserId));
         }
         
         public IEnumerable<MaterialBm> GetInfoWithFilters(FiltersBm bm)
         {
-            if (Enum.IsDefined(typeof(Categories), bm.category) == false)
+            if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            if (bm.minSize < 0 || bm.maxSize < 0)
+            if (bm.MinSize < 0 || bm.MaxSize < 0)
             {
                 throw new WrongMaterialSizeException("Wrong material size. The minimum and maximum material " +
                                                      "size must be greater than -1.");
             }
 
-            return CastToMaterialBms(_dbService.GetMaterialsByNameAndSizes(bm.category, bm.minSize, bm.maxSize, bm.userId));
+            return CastToMaterialBms(_dbService.GetMaterialsByNameAndSizes(bm.Category, bm.MinSize, bm.MaxSize, bm.UserId));
         }
         
         public FileStream GetActualMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) == 0)
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + bm.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
 
-            var actualVersion = _dbService.GetCountOfMaterials(bm.materialName, bm.userId);
+            var actualVersion = _dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId);
 
-            var hash = _dbService.GetFileHashByNameAndVersion(bm.materialName, actualVersion, bm.userId);
+            var hash = _dbService.GetFileHashByNameAndVersion(bm.MaterialName, actualVersion, bm.UserId);
 
             return new FileStream("../Matbox.DAL/Files/" + hash, FileMode.Open);
         }
         
         public FileStream GetSpecificMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) == 0) 
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0) 
             {
-                throw new MaterialNotInDbException("Material " + bm.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
             
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) < bm.versionNumber || 
-                bm.versionNumber <= 0)
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) < bm.VersionNumber || 
+                bm.VersionNumber <= 0)
             {
                 throw new WrongMaterialVersionException("Wrong material version");
             }
 
-            var hash = _dbService.GetFileHashByNameAndVersion(bm.materialName, bm.versionNumber, bm.userId);
+            var hash = _dbService.GetFileHashByNameAndVersion(bm.MaterialName, bm.VersionNumber, bm.UserId);
 
             return new FileStream("../Matbox.DAL/Files/" + hash, FileMode.Open);
         }
         
         public int AddNewMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) > 0) 
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) > 0) 
             {
-                throw new MaterialAlreadyInDbException("Material " + bm.materialName + 
+                throw new MaterialAlreadyInDbException("Material " + bm.MaterialName + 
                                                       " is already in the database.");
             }
 
-            if (Enum.IsDefined(typeof(Categories), bm.category) == false)
+            if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var hash = FileManager.SaveFile(bm.fileBytes).Result;
-            var id = _dbService.AddNewMaterialToDb(bm.materialName, bm.fileBytes, bm.category, bm.userId, hash);
+            var hash = FileManager.SaveFile(bm.FileBytes).Result;
+            var id = _dbService.AddNewMaterialToDb(bm.MaterialName, bm.FileBytes, bm.Category, bm.UserId, hash);
             
             return id;
         }
 
         public int AddNewVersionOfMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) == 0)
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + bm.materialName + 
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + 
                                                    " is not in the database.");
             }
 
-            var hash = FileManager.SaveFile(bm.fileBytes).Result;
-            var id = _dbService.AddNewVersionOfMaterialToDb(bm.materialName, bm.fileBytes, bm.userId, hash);
+            var hash = FileManager.SaveFile(bm.FileBytes).Result;
+            var id = _dbService.AddNewVersionOfMaterialToDb(bm.MaterialName, bm.FileBytes, bm.UserId, hash);
             
             return id;
         }
         
         public List<int> ChangeCategory(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.materialName, bm.userId) == 0)
+            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + bm.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
             
-            if (Enum.IsDefined(typeof(Categories), bm.category) == false)
+            if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var listOfId = _dbService.ChangeCategoryOfMaterial(bm.materialName, bm.category, bm.userId);
+            var listOfId = _dbService.ChangeCategoryOfMaterial(bm.MaterialName, bm.Category, bm.UserId);
             
             return listOfId;
         }

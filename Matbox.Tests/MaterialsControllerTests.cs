@@ -130,7 +130,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(1).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 1);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 1);
         }
         
         [Test]
@@ -138,7 +138,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(1).Result;
             
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 1);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 1);
         }
         
         [Test]
@@ -146,7 +146,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(2).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 1);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 1);
         }
         
         [Test]
@@ -154,7 +154,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(5).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 1);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 1);
         }
         
         [Test]
@@ -162,7 +162,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(6).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 1);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 1);
         }
         
         [Test]
@@ -170,7 +170,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(7).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 0);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 0);
         }
         
         [Test]
@@ -178,7 +178,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(3).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 2);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 2);
         }
         
         [Test]
@@ -186,7 +186,7 @@ namespace Matbox.Tests
         {
             var fileName = AddFileToDb(4).Result;
 
-            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.materialName == fileName), 0);
+            Assert.AreEqual(_controller.GetAllMaterials().Count(x => x.MaterialName == fileName), 0);
         }
         
         [Test]
@@ -197,7 +197,7 @@ namespace Matbox.Tests
             _controller.ChangeCategory(fileName, "Презентация");
 
             Assert.AreEqual(_controller.GetAllMaterials()
-                .First(x => x.materialName == fileName).category, "Презентация");
+                .First(x => x.MaterialName == fileName).Category, "Презентация");
         }
         
         [Test]
@@ -208,7 +208,7 @@ namespace Matbox.Tests
             _controller.ChangeCategory(fileName, "Приложение");
 
             Assert.AreEqual(_controller.GetAllMaterials()
-                .First(x => x.materialName == fileName).category, "Приложение");
+                .First(x => x.MaterialName == fileName).Category, "Приложение");
         }
         
         [Test]
@@ -220,7 +220,7 @@ namespace Matbox.Tests
             _controller.ChangeCategory(fileName, "Другое");
 
             Assert.AreEqual(_controller.GetAllMaterials()
-                .First(x => x.materialName == fileName).category, "Другое");
+                .First(x => x.MaterialName == fileName).Category, "Другое");
         }
         
         [Test]
@@ -231,7 +231,7 @@ namespace Matbox.Tests
             _controller.ChangeCategory(fileName, "xyz");
 
             Assert.AreEqual(_controller.GetAllMaterials()
-                .First(x => x.materialName == fileName).category, "Другое");
+                .First(x => x.MaterialName == fileName).Category, "Другое");
         }
         
         [Test]
@@ -242,7 +242,7 @@ namespace Matbox.Tests
             _controller.ChangeCategory(fileName, "Другое");
 
             Assert.AreEqual(_controller.GetAllMaterials()
-                .Count(x => x.materialName == fileName), 0);
+                .Count(x => x.MaterialName == fileName), 0);
         }
 
         private static string GenRandomString()

@@ -31,7 +31,7 @@ namespace Matbox.Web.Controllers
         public IEnumerable<MaterialDto> GetAllMaterials()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return CastToMaterialDtos(_materialsService.GetAllMaterials(new MaterialBm { userId = userId }));
+            return CastToMaterialDtos(_materialsService.GetAllMaterials(new MaterialBm { UserId = userId }));
         }
 
         // will return information about all versions of the material (you must pass materialName
@@ -44,7 +44,7 @@ namespace Matbox.Web.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             return CastToMaterialDtos(_materialsService.GetInfoAboutMaterial(new MaterialBm 
-                { materialName = materialName, userId = userId }));
+                { MaterialName = materialName, UserId = userId }));
         }
         
         // will return information about all versions of materials of a certain category and size (you must
@@ -56,8 +56,8 @@ namespace Matbox.Web.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return CastToMaterialDtos(_materialsService.GetInfoWithFilters(new FiltersBm { category = category, 
-                    minSize = minSize, maxSize = maxSize, userId = userId }));
+            return CastToMaterialDtos(_materialsService.GetInfoWithFilters(new FiltersBm { Category = category, 
+                    MinSize = minSize, MaxSize = maxSize, UserId = userId }));
         }
 
         // will return the latest version of the material for download (you must pass the materialName
@@ -69,8 +69,8 @@ namespace Matbox.Web.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var fs = _materialsService.GetActualMaterial(new MaterialBm { materialName = materialName, 
-                userId = userId });
+            var fs = _materialsService.GetActualMaterial(new MaterialBm { MaterialName = materialName, 
+                UserId = userId });
             return File(fs, "application/octet-stream", materialName);
         }
         
@@ -83,8 +83,8 @@ namespace Matbox.Web.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var fs = _materialsService.GetSpecificMaterial(new MaterialBm { materialName = materialName, 
-                    versionNumber = versionOfMaterial, userId = userId });
+            var fs = _materialsService.GetSpecificMaterial(new MaterialBm { MaterialName = materialName, 
+                    VersionNumber = versionOfMaterial, UserId = userId });
             return File(fs, "application/octet-stream", materialName);
         }
         
@@ -98,8 +98,8 @@ namespace Matbox.Web.Controllers
 
             var uploadedFileBytes = GetBytesOfFile(uploadedFile).Result;
 
-            var id =  _materialsService.AddNewMaterial(new MaterialBm { fileBytes = uploadedFileBytes, 
-                materialName = uploadedFile.FileName, category = category, userId = userId });
+            var id =  _materialsService.AddNewMaterial(new MaterialBm { FileBytes = uploadedFileBytes, 
+                MaterialName = uploadedFile.FileName, Category = category, UserId = userId });
             return Ok(id);
         }
         
@@ -113,8 +113,8 @@ namespace Matbox.Web.Controllers
 
             var uploadedFileBytes = GetBytesOfFile(uploadedFile).Result;
             
-            var id = _materialsService.AddNewVersionOfMaterial(new MaterialBm { fileBytes = uploadedFileBytes, 
-                materialName = uploadedFile.FileName, userId = userId });
+            var id = _materialsService.AddNewVersionOfMaterial(new MaterialBm { FileBytes = uploadedFileBytes, 
+                MaterialName = uploadedFile.FileName, UserId = userId });
             return Ok(id);
         }
 
@@ -126,8 +126,8 @@ namespace Matbox.Web.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var listOfId =  _materialsService.ChangeCategory(new MaterialBm { materialName = materialName,
-                category = newCategory, userId = userId });
+            var listOfId =  _materialsService.ChangeCategory(new MaterialBm { MaterialName = materialName,
+                Category = newCategory, UserId = userId });
             return Ok(listOfId);
         }
 
