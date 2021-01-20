@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Matbox.DAL.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20210119131109_UserMig")]
+    [Migration("20210120150448_UserMig")]
     partial class UserMig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -28,7 +28,7 @@ namespace Matbox.Web.Controllers
         // will return all materials that are stored in the application
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<MaterialDto> GetAllMaterials()
+        public IQueryable<MaterialDto> GetAllMaterials()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return CastToMaterialDtos(_materialsService.GetAllMaterials(new MaterialBm { UserId = userId }));
@@ -39,7 +39,7 @@ namespace Matbox.Web.Controllers
         [Route("info/{materialName}")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<MaterialDto> GetInfoAboutMaterial(string materialName)
+        public IQueryable<MaterialDto> GetInfoAboutMaterial(string materialName)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -49,15 +49,15 @@ namespace Matbox.Web.Controllers
         
         // will return information about all versions of materials of a certain category and size (you must
         // pass them in the request body)
-        [Route("info/{category}/{minSize}/{maxSize}")]
+        [Route("filters/{category}/")]
         [Authorize(Roles = "Admin, Reader")]
         [HttpGet]
-        public IEnumerable<MaterialDto> GetInfoWithFilters(int category, long minSize, long maxSize)
+        public IQueryable<MaterialDto> GetInfoWithFilters(int category)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return CastToMaterialDtos(_materialsService.GetInfoWithFilters(new FiltersBm { Category = category, 
-                    MinSize = minSize, MaxSize = maxSize, UserId = userId }));
+            return CastToMaterialDtos(_materialsService.GetInfoWithFilters(new FiltersBm 
+                { Category = category, UserId = userId }));
         }
 
         // will return the latest version of the material for download (you must pass the materialName
@@ -126,9 +126,9 @@ namespace Matbox.Web.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var listOfId =  _materialsService.ChangeCategory(new MaterialBm { MaterialName = materialName,
+            var id =  _materialsService.ChangeCategory(new MaterialBm { MaterialName = materialName,
                 Category = newCategory, UserId = userId });
-            return Ok(listOfId);
+            return Ok(id);
         }
 
         private async Task<byte[]> GetBytesOfFile(IFormFile uploadedFile)
@@ -142,13 +142,13 @@ namespace Matbox.Web.Controllers
             return uploadedFileBytes;
         }
         
-        private IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<MaterialBm> bms)
+        private IQueryable<MaterialDto> CastToMaterialDtos(IQueryable<MaterialBm> bms)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<MaterialBm, 
                 MaterialDto>());
             var mapper = new Mapper(config);
             var materialsDtos = mapper.Map<List<MaterialDto>>(bms);
-            return materialsDtos;
+            return materialsDtos.AsQueryable();
         }
     }
 }

@@ -29,11 +29,29 @@ namespace Matbox.DAL.Migrations.MaterialsDb
                     b.Property<int>("Category")
                         .HasColumnType("integer");
 
+                    b.Property<string>("MaterialName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("Matbox.DAL.Models.MaterialVersion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
                     b.Property<string>("Hash")
                         .HasColumnType("text");
 
-                    b.Property<string>("MaterialName")
-                        .HasColumnType("text");
+                    b.Property<int>("MaterialId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("MetaDateTime")
                         .HasColumnType("timestamp without time zone");
@@ -41,15 +59,30 @@ namespace Matbox.DAL.Migrations.MaterialsDb
                     b.Property<double>("MetaFileSize")
                         .HasColumnType("double precision");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
                     b.Property<int>("VersionNumber")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Materials");
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("MaterialVersions");
+                });
+
+            modelBuilder.Entity("Matbox.DAL.Models.MaterialVersion", b =>
+                {
+                    b.HasOne("Matbox.DAL.Models.Material", "Material")
+                        .WithMany("Versions")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+                });
+
+            modelBuilder.Entity("Matbox.DAL.Models.Material", b =>
+                {
+                    b.Navigation("Versions");
                 });
 #pragma warning restore 612, 618
         }

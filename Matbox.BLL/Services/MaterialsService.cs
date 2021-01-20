@@ -20,14 +20,14 @@ namespace Matbox.BLL.Services
             _dbService = new DbService(context);
         }
 
-        public IEnumerable<MaterialBm> GetAllMaterials(MaterialBm bm)
+        public IQueryable<MaterialBm> GetAllMaterials(MaterialBm bm)
         {
             return CastToMaterialBms(_dbService.GetAllMaterials(bm.UserId));
         }
 
-        public IEnumerable<MaterialBm> GetInfoAboutMaterial(MaterialBm bm)
+        public IQueryable<MaterialBm> GetInfoAboutMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
@@ -35,30 +35,24 @@ namespace Matbox.BLL.Services
             return CastToMaterialBms(_dbService.GetMaterialsByName(bm.MaterialName, bm.UserId));
         }
         
-        public IEnumerable<MaterialBm> GetInfoWithFilters(FiltersBm bm)
+        public IQueryable<MaterialBm> GetInfoWithFilters(FiltersBm bm)
         {
             if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            if (bm.MinSize < 0 || bm.MaxSize < 0)
-            {
-                throw new WrongMaterialSizeException("Wrong material size. The minimum and maximum material " +
-                                                     "size must be greater than -1.");
-            }
-
-            return CastToMaterialBms(_dbService.GetMaterialsByNameAndSizes(bm.Category, bm.MinSize, bm.MaxSize, bm.UserId));
+            return CastToMaterialBms(_dbService.GetMaterialsByCategories(bm.Category, bm.UserId));
         }
         
         public FileStream GetActualMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
 
-            var actualVersion = _dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId);
+            var actualVersion = _dbService.GetCountOfVersions(bm.MaterialName, bm.UserId);
 
             var hash = _dbService.GetFileHashByNameAndVersion(bm.MaterialName, actualVersion, bm.UserId);
 
@@ -67,12 +61,12 @@ namespace Matbox.BLL.Services
         
         public FileStream GetSpecificMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0) 
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0) 
             {
                 throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
             
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) < bm.VersionNumber || 
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) < bm.VersionNumber || 
                 bm.VersionNumber <= 0)
             {
                 throw new WrongMaterialVersionException("Wrong material version");
@@ -85,7 +79,7 @@ namespace Matbox.BLL.Services
         
         public int AddNewMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) > 0) 
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) > 0) 
             {
                 throw new MaterialAlreadyInDbException("Material " + bm.MaterialName + 
                                                       " is already in the database.");
@@ -97,28 +91,28 @@ namespace Matbox.BLL.Services
             }
 
             var hash = FileManager.SaveFile(bm.FileBytes).Result;
-            var id = _dbService.AddNewMaterialToDb(bm.MaterialName, bm.FileBytes, bm.Category, bm.UserId, hash);
+            var id = _dbService.AddNewMaterialToDB(bm.MaterialName, bm.FileBytes, bm.Category, bm.UserId, hash);
             
             return id;
         }
 
         public int AddNewVersionOfMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + bm.MaterialName + 
                                                    " is not in the database.");
             }
 
             var hash = FileManager.SaveFile(bm.FileBytes).Result;
-            var id = _dbService.AddNewVersionOfMaterialToDb(bm.MaterialName, bm.FileBytes, bm.UserId, hash);
+            var id = _dbService.AddNewVersionOfMaterialToDB(bm.MaterialName, bm.FileBytes, bm.UserId, hash);
             
             return id;
         }
         
-        public List<int> ChangeCategory(MaterialBm bm)
+        public int ChangeCategory(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(bm.MaterialName, bm.UserId) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
@@ -128,18 +122,18 @@ namespace Matbox.BLL.Services
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            var listOfId = _dbService.ChangeCategoryOfMaterial(bm.MaterialName, bm.Category, bm.UserId);
+            var id = _dbService.ChangeCategoryOfMaterial(bm.MaterialName, bm.Category, bm.UserId);
             
-            return listOfId;
+            return id;
         }
         
-        private IEnumerable<MaterialBm> CastToMaterialBms(IEnumerable<Material> materials)
+        private IQueryable<MaterialBm> CastToMaterialBms(IQueryable<Material> materials)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Material, 
                 MaterialBm>());
             var mapper = new Mapper(config);
             var materialsBms = mapper.Map<List<MaterialBm>>(materials);
-            return materialsBms;
+            return materialsBms.AsQueryable();
         }
     }
 }
