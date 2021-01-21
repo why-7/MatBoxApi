@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Matbox.DAL.Models;
-using Matbox.DAL.DTO;
 
 namespace Matbox.DAL.Services
 {
@@ -13,90 +11,108 @@ namespace Matbox.DAL.Services
         private readonly MaterialsDbContext _context;
 
         public DbService(MaterialsDbContext context)
+        {
+            _context = context;
+        }
+
+        public IQueryable<Material> GetAllMaterials(string userId)
+        {
+            return _context.Materials.Where(x => x.UserId == userId);
+        }
+        
+        public IQueryable<Material> GetMaterialsByCategories(int category, string userId)
+        {
+            return GetAllMaterials(userId).Where(x => x.Category == category);
+        }
+
+        public int GetCountOfVersions(string materialName, string userId)
+        {
+            if (GetAllMaterials(userId).Count(x => x.MaterialName == materialName) == 0)
             {
-                _context = context;
-        }
-
-        public IEnumerable<Material> GetAllMaterials()
-        {
-            return _context.Materials;
-        }
-
-        public int GetCountOfMaterials(string materialName)
-        {
-            return _context.Materials.Count(x => x.materialName == materialName);
-        }
-
-        public IEnumerable<Material> GetMaterialsByName(string materialName)
-        {
-            return _context.Materials.Where(x => x.materialName == materialName);
-        }
-
-        public IEnumerable<Material> GetMaterialsByNameAndSizes(string category, long minSize, long maxSize)
-        {
-            return _context.Materials.Where(x => x.category == category)
-                .Where(x=> x.metaFileSize <= maxSize)
-                .Where(x=> x.metaFileSize >= minSize);
-        }
-
-        public void ChangeCategoryOfMaterial(string materialName, string newCategory)
-        {
-            var materials = GetMaterialsByName(materialName);
-            foreach (var material in materials)
-            {
-                material.category = newCategory;
-                _context.Materials.Update(material);
+                return 0;
             }
+            var materialId = GetAllMaterials(userId).First(x => x.MaterialName == materialName).Id;
+            return _context.MaterialVersions.Count(x => x.MaterialId == materialId);
+        }
+
+        public IQueryable<Material> GetMaterialsByName(string materialName, string userId)
+        {
+            return GetAllMaterials(userId).Where(x => x.MaterialName == materialName);
+        }
+
+        public int ChangeCategoryOfMaterial(string materialName, int newCategory, string userId)
+        {
+            var material = GetAllMaterials(userId).First(x => x.MaterialName == materialName);
+            material.Category = newCategory;
+            _context.Materials.Update(material);
             _context.SaveChanges();
+            return material.Id;
+        }
+        
+        public int AddNewMaterialToDB(string fileName, byte[] uploadedFile, int category, string userId, string hash)
+        {
+            return SaveMaterial(fileName, category, uploadedFile.Length, hash, userId, 1).Result;
         }
 
-        public string GetCategoryOfMaterial(string materialName)
+        public int AddNewVersionOfMaterialToDB(string fileName, byte[] uploadedFile, string userId, string hash)
         {
-            return _context.Materials.Where(x => x.materialName == materialName)
-                .First(x => x.category != null).category;
+            var newNumber = GetCountOfVersions(fileName, userId) + 1;
+            
+            return SaveVersion(fileName, uploadedFile.Length, hash, userId, newNumber).Result;
         }
 
-        public async Task AddNewMaterialToDb(FilesDto dto, string nameInLocalStorage)
+        public string GetFileHashByNameAndVersion(string materialName, int version, string userId)
         {
-            var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
-            await using (var fileStream = new FileStream(path, FileMode.Create))
-            {
-                await dto.uploadedFile.CopyToAsync(fileStream);
-            }
-            await _context.Materials.AddAsync(new Material { materialName = dto.uploadedFile.FileName, 
-                category = dto.category, 
-                metaDateTime = DateTime.Now, versionNumber = 1, 
-                metaFileSize = dto.uploadedFile.Length, path = path }); 
-            await _context.SaveChangesAsync();
+            var materialId = GetAllMaterials(userId).First(x => x.MaterialName == materialName).Id;
+            return _context.MaterialVersions.First(z => 
+                z.MaterialId == materialId && z.VersionNumber == version).Hash;
         }
-
-        public async Task AddNewVersionOfMaterialToDb(FilesDto dto, string nameInLocalStorage)
+        
+        private async Task<int> SaveMaterial(string fileName, int category, double fileSize, 
+            string hash, string userId, int versionNumber)
         {
-            var newNumber = GetCountOfMaterials(dto.uploadedFile.FileName) + 1;
-            var category = GetCategoryOfMaterial(dto.uploadedFile.FileName);
-
-            var path = "../Matbox.DAL/Files/" + nameInLocalStorage;
-            await using (var fileStream = new FileStream(path, FileMode.Create))
+            var material = new Material
             {
-                await dto.uploadedFile.CopyToAsync(fileStream);
-            }
-
-            await _context.Materials.AddAsync(new Material
+                MaterialName = fileName,
+                Category = category,
+                UserId = userId,
+                Versions = new List<MaterialVersion>()
+            };
+            
+            material.Versions.Add(new MaterialVersion
             {
-                materialName = dto.uploadedFile.FileName,
-                category = category,
-                metaDateTime = DateTime.Now,
-                versionNumber = newNumber,
-                metaFileSize = dto.uploadedFile.Length,
-                path = path
+                MetaDateTime = DateTime.Now, 
+                VersionNumber = versionNumber,
+                MetaFileSize = fileSize, 
+                Hash = hash,
+                MaterialId = material.Id,
+                Material = material
             });
+            
+            await _context.Materials.AddAsync(material); 
             await _context.SaveChangesAsync();
+            
+            return material.Id;
         }
-
-        public string GetPathToFileByNameAndVersion(string materialName, int version)
+        
+        private async Task<int> SaveVersion(string fileName, double fileSize, 
+            string hash, string userId, int versionNumber)
         {
-            return GetAllMaterials().Where(x => x.materialName == materialName)
-                .First(x => x.versionNumber == version).path;
+            var material = GetAllMaterials(userId).First(x => x.MaterialName == fileName);
+
+            await _context.MaterialVersions.AddAsync(new MaterialVersion
+            {
+                MetaDateTime = DateTime.Now, 
+                VersionNumber = versionNumber,
+                MetaFileSize = fileSize, 
+                Hash = hash,
+                MaterialId = material.Id,
+                Material = material
+            });
+            
+            await _context.SaveChangesAsync();
+            
+            return material.Id;
         }
     }
 }

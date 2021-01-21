@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matbox.WEB", "Matbox.WEB\Matbox.WEB.csproj", "{4F257223-0D06-463C-8F17-D4255672D93D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matbox.Web", "Matbox.Web\Matbox.Web.csproj", "{4F257223-0D06-463C-8F17-D4255672D93D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matbox.Tests", "Matbox.Tests\Matbox.Tests.csproj", "{E55F66F9-D65C-425A-B22B-1A663909B74B}"
 EndProject

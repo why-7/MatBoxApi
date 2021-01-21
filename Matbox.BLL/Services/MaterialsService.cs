@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AutoMapper;
+using Matbox.BLL.BusinessModels;
+using Matbox.BLL.Enums;
 using Matbox.BLL.Exceptions;
-using Matbox.DAL.DTO;
 using Matbox.DAL.Models;
 using Matbox.DAL.Services;
 
@@ -20,157 +20,125 @@ namespace Matbox.BLL.Services
             _dbService = new DbService(context);
         }
 
-        public IEnumerable<MaterialDto> GetAllMaterials()
+        public IQueryable<MaterialInfoBm> GetAllMaterials(MaterialBm bm)
         {
-            return CastToMaterialDtos(_dbService.GetAllMaterials());
+            return CastToMaterialInfoBms(_dbService.GetAllMaterials(bm.UserId));
         }
-        
-        public IEnumerable<MaterialDto> GetInfoAboutMaterial(MaterialDto dto)
+
+        public IQueryable<MaterialInfoBm> GetInfoAboutMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(dto.materialName) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + dto.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
 
-            return CastToMaterialDtos(_dbService.GetMaterialsByName(dto.materialName));
+            return CastToMaterialInfoBms(_dbService.GetMaterialsByName(bm.MaterialName, bm.UserId));
         }
         
-        public IEnumerable<MaterialDto> GetInfoWithFilters(FiltersDto dto)
+        public IQueryable<MaterialInfoBm> GetInfoWithFilters(FiltersBm bm)
         {
-            if (Enum.IsDefined(typeof(Categories), dto.category) == false)
+            if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            if (dto.minSize < 0 || dto.maxSize < 0)
-            {
-                throw new WrongMaterialSizeException("Wrong material size. The minimum and maximum material " +
-                                                     "size must be greater than -1.");
-            }
-
-            return CastToMaterialDtos(_dbService.GetMaterialsByNameAndSizes(dto.category, 
-                    dto.minSize, dto.maxSize));
+            return CastToMaterialInfoBms(_dbService.GetMaterialsByCategories(bm.Category, bm.UserId));
         }
         
-        public FileStream GetActualMaterial(MaterialDto dto)
+        public FileStream GetActualMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(dto.materialName) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + dto.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
 
-            var actualVersion = _dbService.GetCountOfMaterials(dto.materialName);
+            var actualVersion = _dbService.GetCountOfVersions(bm.MaterialName, bm.UserId);
 
-            var path = _dbService.GetPathToFileByNameAndVersion(dto.materialName, actualVersion);
+            var hash = _dbService.GetFileHashByNameAndVersion(bm.MaterialName, actualVersion, bm.UserId);
 
-            return new FileStream(path, FileMode.Open);
+            return new FileStream("../Matbox.DAL/Files/" + hash, FileMode.Open);
         }
         
-        public FileStream GetSpecificMaterial(MaterialDto dto)
+        public FileStream GetSpecificMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(dto.materialName) == 0) 
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0) 
             {
-                throw new MaterialNotInDbException("Material " + dto.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
             
-            if (_dbService.GetCountOfMaterials(dto.materialName) < dto.versionNumber || 
-                dto.versionNumber <= 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) < bm.VersionNumber || 
+                bm.VersionNumber <= 0)
             {
                 throw new WrongMaterialVersionException("Wrong material version");
             }
 
-            var path = _dbService.GetPathToFileByNameAndVersion(dto.materialName, dto.versionNumber);
+            var hash = _dbService.GetFileHashByNameAndVersion(bm.MaterialName, bm.VersionNumber, bm.UserId);
 
-            return new FileStream(path, FileMode.Open);
+            return new FileStream("../Matbox.DAL/Files/" + hash, FileMode.Open);
         }
         
-        public async Task<string> AddNewMaterial(FilesDto dto)
+        public int AddNewMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(dto.uploadedFile.FileName) > 0) 
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) > 0) 
             {
-                throw new MaterialAlredyInDbException("Material " + dto.uploadedFile.FileName + 
+                throw new MaterialAlreadyInDbException("Material " + bm.MaterialName + 
                                                       " is already in the database.");
             }
 
-            if (Enum.IsDefined(typeof(Categories), dto.category) == false)
+            if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            await _dbService.AddNewMaterialToDb(dto, GenRandomNameInLocalStorage());
+            var hash = FileManager.SaveFile(bm.FileBytes).Result;
+            var id = _dbService.AddNewMaterialToDB(bm.MaterialName, bm.FileBytes, bm.Category, bm.UserId, hash);
             
-            return "Material " + dto.uploadedFile.FileName + " was created";
+            return id;
         }
-        
-        public async Task<string> AddNewVersionOfMaterial(FilesDto dto)
+
+        public int AddNewVersionOfMaterial(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(dto.uploadedFile.FileName) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + dto.uploadedFile.FileName + 
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + 
                                                    " is not in the database.");
             }
 
-            await _dbService.AddNewVersionOfMaterialToDb(dto, GenRandomNameInLocalStorage());
+            var hash = FileManager.SaveFile(bm.FileBytes).Result;
+            var id = _dbService.AddNewVersionOfMaterialToDB(bm.MaterialName, bm.FileBytes, bm.UserId, hash);
             
-            return "New version of material" + dto.uploadedFile.FileName+ " was upload";
+            return id;
         }
         
-        public string ChangeCategory(MaterialDto dto)
+        public int ChangeCategory(MaterialBm bm)
         {
-            if (_dbService.GetCountOfMaterials(dto.materialName) == 0)
+            if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
-                throw new MaterialNotInDbException("Material " + dto.materialName + " is not in the database.");
+                throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
             
-            if (Enum.IsDefined(typeof(Categories), dto.category) == false)
+            if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            _dbService.ChangeCategoryOfMaterial(dto.materialName, dto.category);
+            var id = _dbService.ChangeCategoryOfMaterial(bm.MaterialName, bm.Category, bm.UserId);
             
-            return dto.materialName + " category has been changed to " + dto.category;
-        }
-
-        private IEnumerable<MaterialDto> CastToMaterialDtos(IEnumerable<Material> materials)
-        {
-            var materialDtos = new List<MaterialDto>();
-            
-            foreach (var material in materials)
-            {
-                materialDtos.Add(new MaterialDto
-                {
-                    materialName = material.materialName,
-                    category = material.category,
-                    versionNumber = material.versionNumber,
-                    path = material.path,
-                    metaDateTime = material.metaDateTime,
-                    metaFileSize = material.metaFileSize
-                });
-            }
-
-            return materialDtos;
+            return id;
         }
         
-        public static string GenRandomNameInLocalStorage()
+        private IQueryable<MaterialInfoBm> CastToMaterialInfoBms(IQueryable<Material> materials)
         {
-            const string alphabet = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789";
-            var rnd = new Random();            
-            var sb = new StringBuilder(15);
-                        
-            for (var i = 0; i < 15; i++)
+            var userId = materials.First(x => x.UserId != null).UserId;
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Material, 
+                MaterialInfoBm>());
+            var mapper = new Mapper(config);
+            var materialsBms = mapper.Map<List<MaterialInfoBm>>(materials);
+            foreach (var materialBm in materialsBms)
             {
-                var position = rnd.Next(0, alphabet.Length-1);
-                sb.Append(alphabet[position]);
+                materialBm.CountOfVersions = _dbService.GetCountOfVersions(materialBm.MaterialName, userId);
             }
-            return sb.ToString();
+            return materialsBms.AsQueryable();
         }
-    }
-
-    enum Categories
-    {
-        App,
-        Presentation,
-        Other
     }
 }
