@@ -20,29 +20,29 @@ namespace Matbox.BLL.Services
             _dbService = new DbService(context);
         }
 
-        public IQueryable<MaterialBm> GetAllMaterials(MaterialBm bm)
+        public IQueryable<MaterialInfoBm> GetAllMaterials(MaterialBm bm)
         {
-            return CastToMaterialBms(_dbService.GetAllMaterials(bm.UserId));
+            return CastToMaterialInfoBms(_dbService.GetAllMaterials(bm.UserId));
         }
 
-        public IQueryable<MaterialBm> GetInfoAboutMaterial(MaterialBm bm)
+        public IQueryable<MaterialInfoBm> GetInfoAboutMaterial(MaterialBm bm)
         {
             if (_dbService.GetCountOfVersions(bm.MaterialName, bm.UserId) == 0)
             {
                 throw new MaterialNotInDbException("Material " + bm.MaterialName + " is not in the database.");
             }
 
-            return CastToMaterialBms(_dbService.GetMaterialsByName(bm.MaterialName, bm.UserId));
+            return CastToMaterialInfoBms(_dbService.GetMaterialsByName(bm.MaterialName, bm.UserId));
         }
         
-        public IQueryable<MaterialBm> GetInfoWithFilters(FiltersBm bm)
+        public IQueryable<MaterialInfoBm> GetInfoWithFilters(FiltersBm bm)
         {
             if (Enum.IsDefined(typeof(Categories), bm.Category) == false)
             {
                 throw new WrongCategoryException("Wrong category. Use: Presentation, App, Other");
             }
 
-            return CastToMaterialBms(_dbService.GetMaterialsByCategories(bm.Category, bm.UserId));
+            return CastToMaterialInfoBms(_dbService.GetMaterialsByCategories(bm.Category, bm.UserId));
         }
         
         public FileStream GetActualMaterial(MaterialBm bm)
@@ -127,12 +127,17 @@ namespace Matbox.BLL.Services
             return id;
         }
         
-        private IQueryable<MaterialBm> CastToMaterialBms(IQueryable<Material> materials)
+        private IQueryable<MaterialInfoBm> CastToMaterialInfoBms(IQueryable<Material> materials)
         {
+            var userId = materials.First(x => x.UserId != null).UserId;
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Material, 
-                MaterialBm>());
+                MaterialInfoBm>());
             var mapper = new Mapper(config);
-            var materialsBms = mapper.Map<List<MaterialBm>>(materials);
+            var materialsBms = mapper.Map<List<MaterialInfoBm>>(materials);
+            foreach (var materialBm in materialsBms)
+            {
+                materialBm.CountOfVersions = _dbService.GetCountOfVersions(materialBm.MaterialName, userId);
+            }
             return materialsBms.AsQueryable();
         }
     }

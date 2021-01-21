@@ -142,9 +142,9 @@ namespace Matbox.Web.Controllers
             return uploadedFileBytes;
         }
         
-        private IQueryable<MaterialDto> CastToMaterialDtos(IQueryable<MaterialBm> bms)
+        private IQueryable<MaterialDto> CastToMaterialDtos(IQueryable<MaterialInfoBm> bms)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<MaterialBm, 
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<MaterialInfoBm, 
                 MaterialDto>());
             var mapper = new Mapper(config);
             var materialsDtos = mapper.Map<List<MaterialDto>>(bms);
